@@ -1,0 +1,11 @@
+{
+  "LiteBuildConfig": {
+    "contents": ["content"],
+    "output_dir": "dist",
+    "apps": ["lab", "repl", "notebooks"]
+  },
+  "PyodideLockAddon": {
+    "enabled": true,
+    "prefetch": ["numpy", "matplotlib", "pandas", "plotly"]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "AGENTS.md",
+    "machine_learning/AGENTS.md",
+    "machine_learning/cours_ml/Entrypoint.md",
+    "scripting_python/AGENTS.md",
+    "scripting_python/cours scripting python/Entrypoint.md"
+  ]
+}

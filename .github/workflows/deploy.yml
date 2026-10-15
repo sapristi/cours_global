@@ -1,0 +1,72 @@
+name: Build and Deploy JupyterLite
+
+# Template upstream : jupyterlite/demo, adapté à uv (docs astral-sh/setup-uv).
+# Un seul site GitHub Pages regroupant les deux cours en sous-dossiers
+# (machine_learning/ et scripting_python/). URL cible :
+# https://<owner>.github.io/cours_global/ (baseUrl relatif "./" par défaut de
+# JupyterLite, aucun réglage nécessaire pour un project site).
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          python-version: "3.13"
+          enable-cache: true
+
+      - name: Install the dependencies
+        run: uv sync --frozen
+
+      - name: Check markdown snippets
+        run: uv run --frozen scripts/check_snippets.py
+
+      - name: Check notebooks execute
+        # Les notebooks source contiennent les solutions : on les exécute
+        # avant le build pour ne jamais déployer un TP cassé.
+        run: uv run --frozen scripts/check_notebooks.py
+
+      - name: Collect notebooks into content/
+        # Les notebooks vivent dans les dossiers de cours (source de vérité).
+        # collect_lite_content.py les copie dans content/ en retirant les
+        # solutions et en injectant la cellule "Clear notebook".
+        run: uv run --frozen scripts/collect_lite_content.py
+
+      - name: Build the JupyterLite site
+        run: |
+          uv run --frozen jupyter lite build
+          touch dist/.nojekyll
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

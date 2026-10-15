@@ -1,0 +1,40 @@
+[project]
+name = "cours-global"
+version = "0.1.0"
+description = "Cours fusionnés (machine learning + scripting python) — build JupyterLite (Pyodide)"
+requires-python = ">=3.13"
+dependencies = [
+    # Dépendances de build JupyterLite (template upstream jupyterlite/demo).
+    # Versions unifiées à partir des deux cours fusionnés.
+    "jupyterlite-core==0.8.5",
+    "jupyterlab~=4.6.0",
+    "notebook~=7.6.0",
+    # Noyau Python dans le navigateur (Pyodide, aucune install côté élève).
+    # L'extra [lock] (machine_learning) fige la liste des paquets préchargés.
+    "jupyterlite-pyodide-kernel[lock]==0.8.6",
+    # Indexation du dossier content/ au build
+    "jupyter-server",
+    # Exécution locale des notebooks (scripts/check_notebooks.py). Non embarqué
+    # dans le site JupyterLite (Pyodide les fournit dans le navigateur).
+    "pandas",
+    "numpy",
+    "matplotlib>=3.8.4",
+    # Visualisation des notebooks machine learning (graph_objects 3D)
+    "plotly",
+    # Themes / confort JupyterLab (machine_learning)
+    "jupyterlab-language-pack-fr-FR",
+    "jupyterlab-night",
+    "jupyterlab-miami-nights",
+    "ipycanvas>=0.9.1",
+    "gelidum>=0.7.0",
+    "pydantic<2",
+    "grandalf>=0.8",
+]
+
+[dependency-groups]
+dev = ["pre-commit"]
+
+[tool.uv]
+# Projet virtuel : pas de paquet à construire, juste des dépendances
+# pour `jupyter lite build` (`uv sync` / `uv run`).
+package = false

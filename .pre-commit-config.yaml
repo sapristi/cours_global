@@ -1,0 +1,19 @@
+repos:
+  - repo: local
+    hooks:
+      - id: extract-notebook-images
+        name: Extract embedded notebook images (machine_learning)
+        entry: uv run python scripts/notebooks.py --td machine_learning/td extract
+        language: system
+        files: '^machine_learning/td/.*\.ipynb$'
+      - id: clear-notebook-outputs
+        name: Clear notebook outputs (machine_learning)
+        entry: uv run python scripts/notebooks.py --td machine_learning/td clear
+        language: system
+        files: '^machine_learning/td/.*\.ipynb$'
+      - id: prune-orphan-images
+        name: Prune orphan notebook images (machine_learning)
+        entry: uv run python scripts/notebooks.py --td machine_learning/td prune
+        language: system
+        pass_filenames: false
+        always_run: true
