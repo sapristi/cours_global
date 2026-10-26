@@ -1,172 +1,149 @@
 ---
 titre: 5 - Support Vector Machines
 cours: "[[Entrypoint]]"
-partie: 8
+partie: 5
 statut: draft
 Contexte: |-
   4e année post-bac, 18h au total.
-  Suite de [[4 - Réseaux de neurones à plusieurs couches]].
-  Prérequis : perceptron ([[2 - Perceptron]]), projection Φ (partie 4),
-  découpage train/test et régularisation (partie 7).
-  Partie 8 : SVM — marge maximale, marge souple, programmation quadratique en boîte
-  noire, considérations théoriques, ouverture vers les machines à noyau (partie 9).
-  Durée : 2h (cours ~70 min + TD ~50 min, notebook 05_svm).
+  Suite de [[2 - Perceptron]] et [[3- Données non linéairement séparables]].
+  Séance de 1h15 : ~25 min de cours, ~50 min de TD (TD05).
+  Pas de résolution formelle (Lagrangien, dual, KKT hors programme).
+---
+> [!abstract] Objectif de cette partie
+> Comprendre **pourquoi** le SVM choisit une séparation particulière, la **marge maximale** ; **comment** on l'écrit comme un problème d'optimisation ; et pourquoi c'est, au fond, un **perceptron amélioré** que l'on entraîne par descente de gradient.
+
+> [!danger] Changement de convention : cibles $\pm 1$
+> Dans tout ce chapitre (et au TD05), les cibles valent $t \in \{-1, +1\}$, et non plus $\{0, 1\}$ comme au [[2 - Perceptron|chapitre 2]] et au TD01. Avec le score $z = w \cdot x + b$, la sortie est $y = \text{sign}(z)$.
+> Intérêt : un point est **bien classé** si et seulement si $t\,z > 0$. Une seule inégalité pour les deux classes.
+
+# 1. Intuition : quelle droite choisir ?
+
+Sur un jeu linéairement séparable, il existe une **infinité** de droites qui séparent parfaitement les données.
+
+![[assets/05-svm-separateurs.png]]
+
+Le perceptron s'arrête sur la première qu'il trouve : elle dépend de l'initialisation et de l'ordre de présentation des points, et elle **frôle** souvent un point (droite « limite » en pointillés). Un nouveau point légèrement bruité de ce côté-là sera mal classé.
+
+Intuitivement, on préfère la droite qui laisse **le plus de place possible de chaque côté** (en vert) : un point un peu déplacé reste du bon côté.
+
+> [!info] Définitions (informelles)
+> - **Marge** : distance entre la droite séparatrice et le point d'entraînement le plus proche.
+> - **SVM** (*Support Vector Machine*) : choisit la droite de **marge maximale**. Elle est **unique**.
+> - **Vecteurs de support** : les points les plus proches, ceux qui « touchent » la marge. Eux seuls déterminent la droite : déplacer un autre point (sans franchir la marge) ne change rien.
+
+# 2. Formalisation : marge dure
+
+## 2.1 Distance à l'hyperplan
+
+L'hyperplan séparateur est $\{x : w \cdot x + b = 0\}$ ; $w$ lui est **normal**. La distance (admise) d'un point $x_i$ à cet hyperplan vaut :
+
+$$d(x_i) = \frac{|w \cdot x_i + b|}{\|w\|}$$
+
+Si le point est bien classé, $|w \cdot x_i + b| = t_i (w \cdot x_i + b)$. La marge d'un séparateur est donc :
+
+$$\text{marge}(w, b) = \min_i \frac{t_i (w \cdot x_i + b)}{\|w\|}$$
+
+(négative si un point est mal classé : c'est la fonction que l'on code en premier au TD).
+
+## 2.2 Normalisation
+
+Multiplier $(w, b)$ par $\alpha > 0$ ne change **pas** l'hyperplan. On peut donc fixer l'échelle en imposant que les points les plus proches vérifient :
+
+$$\min_i t_i (w \cdot x_i + b) = 1$$
+
+Alors les points les plus proches sont à distance $1/\|w\|$, et la bande vide entre les deux classes, délimitée par $z = -1$ et $z = +1$, a pour largeur $2/\|w\|$.
+
+![[assets/05-svm-marge.png]]
+
+> [!info] Lecture
+> Trait plein : frontière $z = 0$. Pointillés : $z = \pm 1$. Les trois points entourés sont les vecteurs de support : ils sont exactement sur $z = \pm 1$. Aucun point d'entraînement n'est dans la bande.
+
+## 2.3 Le problème d'optimisation
+
+Maximiser la marge $1/\|w\|$ revient à minimiser $\|w\|^2$ (plus commode) :
+
+$$\min_{w,\,b} \ \frac{1}{2}\|w\|^2 \quad \text{sous les contraintes} \quad t_i (w \cdot x_i + b) \ge 1, \quad i = 1, \dots, N$$
+
+C'est un problème de **programmation quadratique** : objectif quadratique, contraintes linéaires. Il a une **solution unique** (si les données sont séparables) et des **solveurs dédiés** le résolvent efficacement. On l'admet : sa résolution est hors programme.
+
+# 3. Marge souple
+
+## 3.1 Variables d'écart
+
+Si les données ne sont pas séparables (bruit, point aberrant), les contraintes $t_i z_i \ge 1$ sont impossibles à satisfaire toutes. On autorise chaque point à violer sa contrainte d'une quantité $\xi_i \ge 0$ (variable d'écart), que l'on fait payer :
+
+$$\min_{w,\,b,\,\xi} \ \frac{1}{2}\|w\|^2 + C \sum_{i=1}^N \xi_i \quad \text{s.c.} \quad t_i (w \cdot x_i + b) \ge 1 - \xi_i, \quad \xi_i \ge 0$$
+
+![[assets/05-svm-marge-souple.png]]
+
+> [!info] Lecture de $\xi_i$
+> - $\xi_i = 0$ : point hors de la bande, du bon côté (aucune pénalité).
+> - $0 < \xi_i \le 1$ : point **dans la bande** mais encore bien classé ($\xi_1$ sur la figure).
+> - $\xi_i > 1$ : point **mal classé** ($\xi_2$, $\xi_3$).
+>
+> Seules les violations les plus nettes sont annotées : d'autres points (par exemple un $+1$ légèrement à l'intérieur de sa marge) ont aussi un petit $\xi_i > 0$.
+
+> [!info] Rôle de $C$
+> - $C$ **grand** : chaque violation coûte cher, on colle aux données ; marge étroite (à la limite, marge dure).
+> - $C$ **petit** : on accepte des violations pour avoir une marge large ; modèle plus simple, plus robuste au bruit.
+>
+> $C$ arbitre entre **marge large** et **erreurs d'entraînement** : c'est un hyperparamètre de régularisation, à choisir sur des données de validation.
+
+## 3.2 Réécriture sans contraintes : la perte hinge
+
+À l'optimum, chaque $\xi_i$ est le plus petit possible : $\xi_i = \max(0,\ 1 - t_i z_i)$. On remplace dans l'objectif, et on le renormalise (à un facteur près) :
+
+$$E(w, b) = \frac{\lambda}{2}\|w\|^2 + \frac{1}{N} \sum_{i=1}^N \max\big(0,\ 1 - t_i (w \cdot x_i + b)\big)$$
+
+- $\max(0, 1 - t z)$ est la **perte hinge** (« charnière ») : nulle si le point est au-delà de sa marge ($t z \ge 1$), linéaire sinon.
+- $\lambda \approx 1/(NC)$ (admis) : grand $\lambda$ ⇔ petit $C$ ⇔ marge large.
+- Le biais $b$ n'est **pas** régularisé.
+
+Plus de contraintes : on peut minimiser $E$ par **descente de gradient**, comme d'habitude.
+
+## 3.3 Sous-gradient
+
+La hinge n'est pas dérivable en $t z = 1$ ; on prend la dérivée 0 en ce point (sous-gradient). En notant $z_i = w \cdot x_i + b$ :
+
+$$\frac{\partial E}{\partial w} = \lambda w - \frac{1}{N} \sum_{i \,:\, t_i z_i < 1} t_i\, x_i \qquad\qquad \frac{\partial E}{\partial b} = -\frac{1}{N} \sum_{i \,:\, t_i z_i < 1} t_i$$
+
+puis $w \leftarrow w - \eta \frac{\partial E}{\partial w}$, $b \leftarrow b - \eta \frac{\partial E}{\partial b}$.
+
+> [!example] Lecture (c'est ce qu'on code au TD)
+> - Seuls les points qui **violent leur marge** ($t_i z_i < 1$) contribuent : chacun tire $w$ dans la direction $t_i x_i$, pour se repousser du bon côté.
+> - Le terme $\lambda w$ fait **rétrécir** $w$ à chaque pas, donc élargit la marge $2/\|w\|$.
+> - Les points bien au-delà de leur marge n'interviennent pas.
+
+# 4. Lien avec le perceptron
+
+Le perceptron minimise lui aussi une perte, $\max(0, -t z)$ : nulle dès que le point est bien classé. Une descente de gradient **stochastique** (un point à la fois) sur cette perte donne, pour un point mal classé ($t z < 0$) :
+
+$$w \leftarrow w + \eta\, t\, x, \qquad b \leftarrow b + \eta\, t$$
+
+C'est exactement la **règle de Rosenblatt** du [[2 - Perceptron|chapitre 2]] réécrite avec des cibles $\pm 1$ (le facteur 2 venant de $y - t = -2t$ est absorbé dans le pas).
+
+![[assets/05-svm-pertes.png]]
+
+| | Perceptron | SVM (marge souple) |
+|---|---|---|
+| Perte par point | $\max(0, -t z)$ | $\max(0, 1 - t z)$ |
+| Point bien classé mais proche | ignoré | pénalisé (on exige $t z \ge 1$) |
+| Régularisation | aucune | $\frac{\lambda}{2}\|w\|^2$ : maximise la marge |
+| Données séparables | *une* droite, qui dépend de l'ordre et de l'initialisation | *la* droite de marge maximale |
+| Données bruitées | ne converge pas, oscille | minimise $E$, se stabilise |
+
+**SVM = perceptron + « 1 » (on exige une marge) + $\|w\|^2$ (on la maximise).**
+
+# 5. Ouverture : SVM non linéaire
+
+Comme au [[3- Données non linéairement séparables|chapitre 3]], remplacer $x$ par $\Phi(x)$ donne un SVM à frontière non linéaire (c'est le bonus du TD). L'**astuce du noyau** permet de le faire efficacement, même quand $\Phi$ est de très grande (voire infinie) dimension : partie 9.
+
 ---
 
-> [!abstract] Objectif de cette partie
-> Le perceptron trouve **un** séparateur : n'importe lequel. La question devient : parmi tous
-> les séparateurs qui « marchent », **choisir le meilleur** — celui qui généralisera le mieux.
-> Le SVM (Support Vector Machine, Vapnik & Chervonenkis, 1963) répond : celui dont la **marge**
-> est maximale. On verra la marge et ses **vecteurs supports**, comment la calculer
-> (un solveur, sans faire les maths de la résolution), comment rester robuste quand les
-> données sont bruitées (**marge souple**), et on ouvrira la voie aux **machines à noyau**
-> (partie 9).
-
-# 1. Un séparateur quelconque ne suffit pas
-
-Souvenez-vous du TD01 (la [[2 - Perceptron|partie perceptron]]) :
-
-- si les données sont linéairement séparables, l'algorithme de Rosenblatt **converge** ;
-- mais rien ne dit *quelle* droite il choisit : cela dépend de l'ordre de présentation des
-  points, du départ des poids...
-
-Deux runs donnent alors des droites différentes, **toutes deux correctes** sur les données
-d'entraînement.
-
-![[assets/08-deux-separateurs.png]]
-
-Or sur des données de test, ces deux séparateurs ne se valent pas : l'un se trompe, l'autre
-non — **sans que rien dans l'erreur d'entraînement ne les distingue** (zéro erreur de
-classement pour tous les deux).
-
 > [!note] À retenir
-> « Trouver un séparateur » était le problème facile. Il manque un **critère de choix**
-> parmi les séparateurs possibles. Le SVM propose ce critère : la **marge**.
-
-# 2. La marge et les vecteurs supports
-
-On garde les conventions du cours : les cibles sont $t_i \in \{-1, +1\}$ (partie 4), le modèle
-linéaire calcule la pré-activation $z(x) = w^\top x + b$ et prédit $\text{sign}(z(x))$.
-
-Définitions (voir la figure) :
-
-- **distance d'un point à l'hyperplan** : $\dfrac{|w^\top x + b|}{\|w\|}$ ;
-- **marge** du séparateur : la plus petite de ces distances, c'est-à-dire la distance entre
-  l'hyperplan et le point le plus proche ;
-- **vecteurs supports** : les points les plus proches, ceux qui « bloquent » la bande.
-
-![[assets/08-marge-def.png]]
-
-Deux remarques qui rendent la marge attractive :
-
-1. **Les autres points ne comptent pas.** Si on déplace un point sans franchir la bande de
-   marge, le « meilleur » séparateur ne change pas d'un pouce. La solution ne dépend que des
-   vecteurs supports : le reste des données est décoratif.
-2. **La marge mesure l'épaisseur sous le séparateur.** Un séparateur collé aux données a une
-   marge minuscule : la moindre variation de données le fait vaciller. Un séparateur large est
-   « confortable ».
-
-![[assets/08-marge-maximale.png]]
-
-# 3. Le meilleur séparateur : un problème d'optimisation
-
-On veut la marge maximale. Une petite astuce d'écriture simplifie tout : on peut toujours
-**redimensionner** $(w, b)$ — le classeur signe($w^\top x + b$) ne dépend que du *signe* de
-$w^\top x + b$, pas de son ampleur. On choisit donc l'échelle telle que
-
-$$t_i \, (w^\top x_i + b) \geq 1 \quad \text{pour tout } i.$$
-
-Dans cette écriture, la marge vaut exactement $\dfrac{1}{\|w\|}$ : agrandir la marge, c'est
-**raccourcir** $w$. « Choisir le meilleur séparateur » devient le problème :
-
-$$\boxed{\;\min_{w,b}\ \tfrac{1}{2}\|w\|^2 \quad \text{sous contrainte} \quad t_i\,(w^\top x_i + b) \geq 1\ \ \forall i\;}$$
-
-On écrit le problème ; on ne le résout pas à la main : c'est un problème à
-**objectif + contraintes**, de la même famille que la programmation linéaire vue dans les
-prérequis (« maximiser le profit sous des contraintes de ressources »). La variante ici
-s'appelle la **programmation quadratique** : même exercice, mais la courbe à minimiser est
-une parabole au lieu d'un plan.
-
-![[assets/08-prog-quadratique.png]]
-
-> [!info] Le solveur est une boîte noire (assumée)
-> Résoudre un programme quadratique à la main serait fastidieux : des logiciels le font
-> (c'est le même type d'outil qu'un solveur de programmation linéaire). On lui donne données
-> et contraintes, il rend $(w, b)$ — et sa solution a une propriété précieuse : les points
-> placés exactement sur les bords de la bande ($t_i(w^\top x_i + b) = 1$) sont **les vecteurs
-> supports** ; les points remplis loin de la bande n'influencent même pas sa réponse.
->
-> Dans le TD, nous approcherons cette solution par notre propre algorithme ; les chiffres
-> affichés dans ce cours et ce TD sont issus de cette implémentation, **approximation** de ce
-> que rendrait un solveur quadratique exact.
-
-Le SVM linéaire est donc résumé par : *maximiser la marge* = *choisir le séparateur le plus
-« éloigné des deux classes »*.
-
-# 4. La marge souple : tolérer les points mal placés
-
-La marge dure a une faiblesse : **un seul point mal placé compte pour toute
-la solution**. Ajoutez un point aberrant profondément du mauvais côté, et le séparateur
-« rigide » plonge : la marge s'effondre (bande grise minuscule, panneau de gauche).
-
-![[assets/08-marge-souple.png]]
-
-Idée du SVM dit **à marge souple** : tolérer quelques points fautifs, mais **les faire payer**
-un prix. Un paramètre $C$ règle le tarif de la tricherie :
-
-- $C$ grand : tricher coûte cher → la rigueur domine, la marge s'écrase pour servir chaque
-  point (panneau de gauche) ;
-- $C$ petit : tricher bon marché → la frontière garde sa marge et laisse le point fautif en
-  erreur (panneau de droite).
-
-C'est le même arbitrage que la régularisation vue en partie 7 : ne pas payer au prix fort une
-exigence entière quand les données résistent. (Vocabulaire : dans le TD, on fera varier la
-force de régularisation $\lambda$, qui joue un rôle symétrique inverse du $C$.)
-
-> [!note] À retenir
-> Marge dure : chaque point doit être bien servi. Marge souple : chaque point peut tricher,
-> mais **paie**. Le bon équilibre se règle sur les données de test (partie 7) — pas en
-> regardant l'erreur d'entraînement, qui est toujours propice à la rigueur extrême.
-
-# 5. Résumé et ouverture : projeter, puis des noyaux
-
-Retour sur la ligne principale du cours :
-
-- Le **critère** du SVM est nouveau : non pas zéro erreur d'entraînement (partagé par une
-  infinité de séparateurs), mais la **marge maximale**.
-- **Pourquoi ça généralise** (énoncé admis) : imposer une grande marge rend bien plus rare
-  l'ensemble des séparateurs « qui collent aux données » — qu'un hyperplan à large marge soit
-  le fruit du hasard de l'échantillon est statistiquement bien moins plausible. C'est la même
-  intuition que le découpage train/test vu en partie 7 : juger sur des données entièrement
-  nouvelles, et préférer les modèles qui n'ont pas besoin de coller au détail.
-
-Ensuite, la partie 4 nous a déjà appris à rendre séparable ce qui ne l'est pas : projeter avec
-$\Phi$ (les [[3- Données non linéairement séparables|cercles concentriques]]) puis séparer
-linéairement. Le TD05 fera exactement ça avec le SVM : **projeter, puis séparer à marge
-maximale**.
-
-Pour finir, un avant-goût de la partie 9 (machines à noyau) : le SVM a une propriété rare —
-sa solution ne fait intervenir que des produits scalaires. Il sera donc
-possible de remplacer $\Phi(x)^\top \Phi(x')$ par une simple fonction $k(x, x')$, **sans jamais
-calculer $\Phi$**, ce qui ouvre la porte à des projections en dimension infinie. Mais nous
-gardons cela pour la partie 9.
-
-> [!abstract] À la fin de cette partie, vous devez savoir faire
-> 1. Expliquer pourquoi un séparateur quelconque ne suffit pas (deux perceptrons valides,
->    erreurs de test différentes) et sur quoi repose le critère du SVM (la marge).
-> 2. Définir la marge, donner la distance d'un point à l'hyperplan, et **identifier les
->    vecteurs supports sur un dessin**.
-> 3. Écrire et commenter le problème d'optimisation du SVM à marge dure
->    ($\min \frac12\|w\|^2$ sous $t_i(w^\top x_i + b) \geq 1$) : marge maximale ⇔
->    $\|w\|$ minimal. (Le résoudre à la main : non.)
-> 4. Expliquer le rôle du solveur (programmation quadratique, boîte noire) et lire sa
->    sortie : $(w, b)$ et quels points déterminent la solution.
-> 5. Expliquer la marge souple en mots : point mal placé, prix payé par point fautif
->    (paramètre $C$), équilibre d'arbitrage.
-> 6. Relier la marge à la généralisation vue en partie 7 (grande marge ⇒ bonne
->    généralisation, énoncé admis) et le tout au train/test.
-> 7. En application : implémenter un SVM approché (descente de gradient, hinge +
->    régularisation), l'appliquer sur un jeu linéaire et sur le cercle via $\Phi$, et
->    situer l'astuce noyau pour la partie 9.
-
-La suite logique est l'application : rendez-vous dans le TD05.
+> 1. Cibles $t \in \{-1, +1\}$ : bien classé ⇔ $t z > 0$.
+> 2. Parmi tous les séparateurs, le SVM choisit celui de **marge maximale** ; il ne dépend que des **vecteurs de support**.
+> 3. Marge dure : $\min \frac{1}{2}\|w\|^2$ s.c. $t_i z_i \ge 1$ (programmation quadratique, solveurs dédiés).
+> 4. Marge souple : $E(w, b) = \frac{\lambda}{2}\|w\|^2 + \frac{1}{N}\sum \max(0, 1 - t_i z_i)$, minimisée par descente de (sous-)gradient.
+> 5. $\lambda$ (ou $C$) arbitre entre marge large et erreurs d'entraînement.
+> 6. Perceptron : une droite quelconque, oscille sur données bruitées. SVM : la droite de marge maximale, stable.
