@@ -40,7 +40,9 @@ uv run python <script>.py
 Les notebooks du repo sont les **corrigés** (solutions incluses). Au build
 JupyterLite, `scripts/collect_lite_content.py` les copie dans `content/` en
 retirant les solutions (blocs `# BEGIN`/`# END`, les deux formes `# BEGIN` et
-`#BEGIN` sont acceptées) et en injectant un bouton « Clear notebook ».
+`#BEGIN` sont acceptées) et en injectant un bouton « Clear notebook ». Les cellules markdown dont la
+première ligne non vide est exactement `# TOCLEAR` (réponses du corrigé) sont
+supprimées.
 
 ### Aperçu local (fichier → fichier)
 

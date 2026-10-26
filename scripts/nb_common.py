@@ -72,6 +72,34 @@ def drop_delete_cells(nb: dict) -> int:
     return removed
 
 
+TOCLEAR_MARQUEUR = "TOCLEAR"
+
+
+def is_toclear_cell(cell: dict) -> bool:
+    """Vrai si la cellule markdown est une réponse du corrigé (``# TOCLEAR``).
+
+    Seules les cellules ``markdown`` sont concernées. La 1ère ligne non vide,
+    une fois les espaces retirés, doit valoir exactement ``# TOCLEAR``.
+    """
+    if cell.get("cell_type") != "markdown":
+        return False
+    for line in as_lines(cell):
+        if not line.strip():
+            continue
+        return line.strip() == f"# {TOCLEAR_MARQUEUR}"
+    return False
+
+
+def drop_toclear_cells(nb: dict) -> int:
+    """Supprime les cellules markdown ``# TOCLEAR`` (en place). Renvoie leur nombre."""
+    cells = nb.get("cells", [])
+    kept = [c for c in cells if not is_toclear_cell(c)]
+    removed = len(cells) - len(kept)
+    if removed:
+        nb["cells"] = kept
+    return removed
+
+
 def source_text(cell: dict) -> str:
     src = cell.get("source", "")
     if isinstance(src, list):
@@ -148,11 +176,13 @@ def strip_solutions(nb: dict) -> int:
     """Retire les solutions (blocs BEGIN/END) et vide les sorties des cellules code.
 
     Supprime aussi les cellules code dont la 1ère ligne est un commentaire
-    contenant ``DELETE`` (voir ``drop_delete_cells``).
+    contenant ``DELETE`` (voir ``drop_delete_cells``), ainsi que les cellules markdown dont la
+    1ère ligne non vide est exactement ``# TOCLEAR`` (voir ``drop_toclear_cells``).
 
     Opère en place sur le dict notebook. Renvoie le nombre de blocs retirés.
     """
     drop_delete_cells(nb)
+    drop_toclear_cells(nb)
     count = 0
     for cell in nb.get("cells", []):
         if cell.get("cell_type") != "code":

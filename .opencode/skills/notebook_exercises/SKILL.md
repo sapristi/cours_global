@@ -169,6 +169,17 @@ check_fit_batch()
 - Pour une variante **stochastique** (`fit_online`), fige l'ordre (`seed`) ou teste plutôt l'étape déterministe (`_step`/`fit_batch`).
 - Pour un réseau à activation **non linéaire** (sigmoid/tanh), le résultat n'est pas un littéral exact : on ne peut pas écrire `==` une constante. On teste alors `forward`/`backward` sur des valeurs de référence pré-calculées (comparaison par `np.allclose`).
 
+## Cellule de réponse `# TOCLEAR`
+
+Pour fournir la réponse du corrigé à une question de lecture, placer juste
+après la question une cellule **markdown** dont la première ligne non vide est
+exactement `# TOCLEAR`, suivie du texte de la réponse. À la préparation
+(`strip_solutions`, donc `prepare_notebooks.py` et `collect_lite_content.py`),
+ces cellules sont supprimées. Les cellules code ne sont pas concernées, et un
+`# TOCLEAR` qui n'est pas en première ligne non vide ne déclenche rien. Si
+l'étudiant doit écrire sa réponse, laisser avant la cellule `# TOCLEAR` une
+cellule markdown « *Votre réponse :* » (visible des deux côtés).
+
 ## Règles BEGIN/END
 
 - `# BEGIN` et `# END` sur leur **propre ligne**, dans des cellules de code uniquement.

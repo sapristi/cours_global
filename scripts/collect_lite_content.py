@@ -14,7 +14,8 @@ JupyterLite. À la copie, chaque notebook :
 1. perd ses solutions : les blocs ``# BEGIN``/``# END`` (ou ``#BEGIN``/``#END``)
    sont remplacés par ``# TODO`` + corps/hint dérivé des commentaires, les
    cellules de code dont la 1ère ligne est un commentaire contenant ``DELETE``
-   sont supprimées, et les
+   sont supprimées, les cellules markdown dont la 1ère ligne non vide est
+   exactement ``# TOCLEAR`` (réponses du corrigé) sont supprimées, et les
    sorties sont vidées (la version déployée est un énoncé à trous) ;
 2. reçoit en première cellule un bouton « Clear notebook » qui purge son état du
    stockage local du navigateur (IndexedDB) ;

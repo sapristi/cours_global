@@ -3,7 +3,8 @@
 
 Retire les solutions (blocs ``# BEGIN``/``# END``), supprime les cellules de
 code dont la 1ère ligne est un commentaire contenant ``DELETE``, vide les
-sorties et
+sorties,
+supprime les cellules markdown dont la 1ère ligne est ``# TOCLEAR`` et
 ré-embarque les images ``assets/`` en base64, comme le ferait le pipeline CI
 (``collect_lite_content.py``), mais **sans** bouton « Clear notebook » et sans
 toucher au corrigé : le résultat est écrit dans un fichier séparé.
