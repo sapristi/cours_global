@@ -110,7 +110,6 @@ def fig_marge(X, t, w, b):
     d = np.array([-u[1], u[0]])
     base = x0 + 0.5 * d
     p1, p2 = base - u / n, base + u / n
-    p2 = p2 - 0.0 * u
     ax.annotate("", xy=p2, xytext=p1,
                 arrowprops=dict(arrowstyle="<->", color="k", lw=1.3))
     ax.text(*(base + 0.25 * d), "$2/\\|w\\|$", fontsize=12,

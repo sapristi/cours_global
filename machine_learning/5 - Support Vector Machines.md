@@ -82,6 +82,8 @@ $$\min_{w,\,b,\,\xi} \ \frac{1}{2}\|w\|^2 + C \sum_{i=1}^N \xi_i \quad \text{s.c
 > - $\xi_i > 1$ : point **mal classé** ($\xi_2$, $\xi_3$).
 >
 > Seules les violations les plus nettes sont annotées : d'autres points (par exemple un $+1$ légèrement à l'intérieur de sa marge) ont aussi un petit $\xi_i > 0$.
+>
+> Les **vecteurs de support** sont alors tous les points tels que $t_i z_i \le 1$ (sur la marge, dans la bande ou mal classés) : ce sont eux qui fixent la frontière.
 
 > [!info] Rôle de $C$
 > - $C$ **grand** : chaque violation coûte cher, on colle aux données ; marge étroite (à la limite, marge dure).
@@ -91,12 +93,12 @@ $$\min_{w,\,b,\,\xi} \ \frac{1}{2}\|w\|^2 + C \sum_{i=1}^N \xi_i \quad \text{s.c
 
 ## 3.2 Réécriture sans contraintes : la perte hinge
 
-À l'optimum, chaque $\xi_i$ est le plus petit possible : $\xi_i = \max(0,\ 1 - t_i z_i)$. On remplace dans l'objectif, et on le renormalise (à un facteur près) :
+À l'optimum, chaque $\xi_i$ est le plus petit possible : $\xi_i = \max(0,\ 1 - t_i z_i)$. On remplace dans l'objectif, puis on divise tout par $NC$ (ce qui ne change pas le minimum) :
 
 $$E(w, b) = \frac{\lambda}{2}\|w\|^2 + \frac{1}{N} \sum_{i=1}^N \max\big(0,\ 1 - t_i (w \cdot x_i + b)\big)$$
 
 - $\max(0, 1 - t z)$ est la **perte hinge** (« charnière ») : nulle si le point est au-delà de sa marge ($t z \ge 1$), linéaire sinon.
-- $\lambda \approx 1/(NC)$ (admis) : grand $\lambda$ ⇔ petit $C$ ⇔ marge large.
+- $\lambda = 1/(NC)$ : grand $\lambda$ ⇔ petit $C$ ⇔ marge large.
 - Le biais $b$ n'est **pas** régularisé.
 
 Plus de contraintes : on peut minimiser $E$ par **descente de gradient**, comme d'habitude.
@@ -111,16 +113,16 @@ puis $w \leftarrow w - \eta \frac{\partial E}{\partial w}$, $b \leftarrow b - \e
 
 > [!example] Lecture (c'est ce qu'on code au TD)
 > - Seuls les points qui **violent leur marge** ($t_i z_i < 1$) contribuent : chacun tire $w$ dans la direction $t_i x_i$, pour se repousser du bon côté.
-> - Le terme $\lambda w$ fait **rétrécir** $w$ à chaque pas, donc élargit la marge $2/\|w\|$.
+> - Le terme $\lambda w$ fait **rétrécir** $w$ à chaque pas, donc élargit la marge $1/\|w\|$ (et la bande $2/\|w\|$).
 > - Les points bien au-delà de leur marge n'interviennent pas.
 
 # 4. Lien avec le perceptron
 
-Le perceptron minimise lui aussi une perte, $\max(0, -t z)$ : nulle dès que le point est bien classé. Une descente de gradient **stochastique** (un point à la fois) sur cette perte donne, pour un point mal classé ($t z < 0$) :
+Le perceptron minimise lui aussi une perte, $\max(0, -t z)$ : nulle dès que le point est bien classé. Une descente de gradient **stochastique** (un point à la fois) sur cette perte donne, pour un point mal classé ($t z \le 0$) :
 
 $$w \leftarrow w + \eta\, t\, x, \qquad b \leftarrow b + \eta\, t$$
 
-C'est exactement la **règle de Rosenblatt** du [[2 - Perceptron|chapitre 2]] réécrite avec des cibles $\pm 1$ (le facteur 2 venant de $y - t = -2t$ est absorbé dans le pas).
+C'est exactement la **règle de Rosenblatt** du [[2 - Perceptron|chapitre 2]] réécrite avec des cibles $\pm 1$ : $w \leftarrow w - r\,(y - t)\,x$ y devient $w \leftarrow w + 2r\,t\,x$ car $y - t = -2t$ ; le pas, noté $r$ au chapitre 2, absorbe ce facteur 2 ($\eta = 2r$).
 
 ![[assets/05-svm-pertes.png]]
 
