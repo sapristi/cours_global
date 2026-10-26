@@ -1,8 +1,8 @@
-# TD 05 ML — Élan et surapprentissage : plan d'implémentation
+# TD 06 ML — Élan et surapprentissage : plan d'implémentation
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Créer un nouveau TD autonome `machine_learning/td/05_momentum_surapprentissage.ipynb` (≈3h) qui analyse, sur des cas concrets et via des courbes d'apprentissage train/test, ce que l'élan (momentum) apporte — et ne apporte pas — à la généralisation.
+**Goal:** Créer un nouveau TD autonome `machine_learning/td/06_momentum_surapprentissage.ipynb` (≈3h) qui analyse, sur des cas concrets et via des courbes d'apprentissage train/test, ce que l'élan (momentum) apporte — et ne apporte pas — à la généralisation.
 
 **Architecture:** Un nouveau fichier notebook, autonome (imports + définitions d'outils fouries en tête : `MLP`, `MLPMomentum`, `gen_2d`, `plot_history` — copies fidèles de TD 03, sans blocs `# BEGIN`). Quatre exercices (Ex. 1 à 4) + bilan. `03_backpropagation.ipynb` n'est **pas** modifié.
 
@@ -16,7 +16,7 @@
 - Autonomie : version étudiante (build JupyterLite, solutions retirées) doit être exécutable sans aucun notebook précédent — tout ce dont un exercice a besoin est défini en tête ou dans son propre énoncé.
 - Notation (AGENTS.md machine_learning) : cible `t`/`T`, sortie `y`/`Y` — jamais `y` pour la cible.
 - Grain identique entre variantes μ (comparaisons appariées) ; graines figées pour que les étudiants retrouvent les courbes du corrigé.
-- Ne pas toucher à `03_backpropagation.ipynb` ni aux dossiers `.obsidian/`. **Hors périmètre de cette session mais à faire plus tard : la section 8 / Ex. 9 (« Élan ») du TD 03 sera supprimée** (déplacée/absorbée par le TD 05).
+- Ne pas toucher à `03_backpropagation.ipynb` ni aux dossiers `.obsidian/`. **Hors périmètre de cette session mais à faire plus tard : la section 8 / Ex. 9 (« Élan ») du TD 03 sera supprimée** (déplacée/absorbée par le TD 06).
 - Runtime total du notebook (check) : cible < ~10 min.
 
 ## Review Focus
@@ -44,12 +44,12 @@
 ### Task 1: Squelette et outils du nouveau TD
 
 **Files:**
-- Create: `machine_learning/td/05_momentum_surapprentissage.ipynb`
+- Create: `machine_learning/td/06_momentum_surapprentissage.ipynb`
 
 **Interfaces:**
 - Produces : pour les tasks suivantes — `MLP(sizes, activation, output_activation, seed)`, `MLPMomentum(..., momentum)`, `gen_2d(n, noise, seed)`, `plot_history(history, ax)`, alias `Vec`/`Mat`, `split(X, t, n_train, seed) -> (Xtr, ttr, Xte, tte)`.
 
-- [ ] **Step 1: Md titre + objectifs + plan.** Titre `# TD 5 — Élan et surapprentissage : lire les courbes d'apprentissage`. Objectifs (attendus A1–A3, B1–B3 reformulés : distinguer optimisation/généralisation, reconnaître les régimes d'une courbe test, prédire-avant-de-mesurer l'effet de μ, distinguer zigzag systématique et bruit de batch) ; plan de séance (4 exercices + bilan, ≈3h) ; rappel `v_l ← μ v_l + η ∂E/∂W_l`.
+- [ ] **Step 1: Md titre + objectifs + plan.** Titre `# TD 6 — Élan et surapprentissage : lire les courbes d'apprentissage`. Objectifs (attendus A1–A3, B1–B3 reformulés : distinguer optimisation/généralisation, reconnaître les régimes d'une courbe test, prédire-avant-de-mesurer l'effet de μ, distinguer zigzag systématique et bruit de batch) ; plan de séance (4 exercices + bilan, ≈3h) ; rappel `v_l ← μ v_l + η ∂E/∂W_l`.
 - [ ] **Step 2: Code imports** : `numpy`, `matplotlib.pyplot`, alias `Vec`/`Mat`.
 - [ ] **Step 3: Code outils** (copie fidèle de TD 03, sans `# BEGIN`) : `sigmoid`, `sigmoid_prime`, `tanh_prime`, `ACTIVATIONS`, `MLP` (avec `forward`, `backward`, `step`, `fit_batch`, `loss`, `predict`), `MLPMomentum` (héritage + `step` avec élan), `gen_2d`, `plot_history`, plus un helper `split(X, t, n_train, seed)` (permutation + slicing).
 - [ ] **Step 4:** Commit.
@@ -57,7 +57,7 @@
 ### Task 2: Ex. 1 — premier contact avec/sans élan (lecture guidée)
 
 **Files:**
-- Modify: `machine_learning/td/05_momentum_surapprentissage.ipynb` — insertion md/code/md
+- Modify: `machine_learning/td/06_momentum_surapprentissage.ipynb` — insertion md/code/md
 
 **Interfaces:**
 - Consumes: outils Task 1.
@@ -71,7 +71,7 @@
 ### Task 3: Ex. 2 — la vallée mal conditionnée
 
 **Files:**
-- Modify: `machine_learning/td/05_momentum_surapprentissage.ipynb` — insertion md/code/md
+- Modify: `machine_learning/td/06_momentum_surapprentissage.ipynb` — insertion md/code/md
 
 **Interfaces:**
 - Consumes: outils Task 1.
@@ -87,7 +87,7 @@
 ### Task 4: Ex. 3 — le bruit mémorisé (cœur de l'analyse)
 
 **Files:**
-- Modify: `machine_learning/td/05_momentum_surapprentissage.ipynb` — insertion md/code/md
+- Modify: `machine_learning/td/06_momentum_surapprentissage.ipynb` — insertion md/code/md
 
 **Interfaces:**
 - Consumes: `gen_2d`, `MLP`, `MLPMomentum`, `split`.
@@ -102,7 +102,7 @@
 ### Task 5: Ex. 4 (optionnel) — mini-batchs : l'élan lisse-t-il vraiment ?
 
 **Files:**
-- Modify: `machine_learning/td/05_momentum_surapprentissage.ipynb` — insertion md/code/md
+- Modify: `machine_learning/td/06_momentum_surapprentissage.ipynb` — insertion md/code/md
 
 **Interfaces:**
 - Consumes: `gen_2d`, `MLP`, `MLPMomentum`, `split`.
@@ -116,7 +116,7 @@
 ### Task 6: Bilan
 
 **Files:**
-- Modify: `machine_learning/td/05_momentum_surapprentissage.ipynb` — md bilan en fin de notebook
+- Modify: `machine_learning/td/06_momentum_surapprentissage.ipynb` — md bilan en fin de notebook
 
 **Interfaces:**
 - Consumes: les 4 exercices.
@@ -127,6 +127,6 @@
 
 ### Task 7: Vérification finale et nettoyage
 
-- [ ] **Step 1:** `uv run scripts/check_notebooks.py machine_learning/td/05_momentum_surapprentissage.ipynb --timeout 1800` — aucune cellule ne lève ; noter le runtime.
+- [ ] **Step 1:** `uv run scripts/check_notebooks.py machine_learning/td/06_momentum_surapprentissage.ipynb --timeout 1800` — aucune cellule ne lève ; noter le runtime.
 - [ ] **Step 2:** `uv run python scripts/notebooks.py --td machine_learning/td extract` puis `--td machine_learning/td clear` (sorties vidées, assets extraits — état du dépôt).
 - [ ] **Step 3:** Commit final.
