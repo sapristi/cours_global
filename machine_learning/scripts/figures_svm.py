@@ -64,10 +64,8 @@ def fig_separateurs(X, t, w, b):
     nuage(ax, X, t)
     xs = np.linspace(-3.6, 3.6, 2)
     # droite proche de la max-marge, tournee/decalee ; on garde celles qui separent
-    z = X @ w + b
-    gp, gn = z[t > 0].min(), z[t < 0].max()  # pas de classe + / - le plus proche
     sep = []
-    for ang, shift in [(0.35, 0.0), (-0.35, 0.0)]:
+    for ang in (0.35, -0.35):
         c, s = np.cos(ang), np.sin(ang)
         R = np.array([[c, -s], [s, c]])
         w2 = R @ w
@@ -110,8 +108,9 @@ def fig_marge(X, t, w, b):
     x0 = -b * w / n**2  # point de z=0 le plus proche de l'origine
     # largeur 2/||w|| : fleche entre z=-1 et z=+1, decalee le long de la droite
     d = np.array([-u[1], u[0]])
-    base = x0 + 1.3 * d
+    base = x0 + 0.5 * d
     p1, p2 = base - u / n, base + u / n
+    p2 = p2 - 0.0 * u
     ax.annotate("", xy=p2, xytext=p1,
                 arrowprops=dict(arrowstyle="<->", color="k", lw=1.3))
     ax.text(*(base + 0.25 * d), "$2/\\|w\\|$", fontsize=12,
@@ -124,7 +123,7 @@ def fig_marge(X, t, w, b):
     ax.text(*(x0 + 2.9 * d + 1.3 * u + 0.15 * u), "$z=+1$", color=C_SVM, ha="left")
     ax.text(*(x0 + 2.9 * d - 1.3 * u - 0.15 * u), "$z=-1$", color=C_SVM, ha="right")
     style(ax)
-    ax.set_title("Marge maximale : largeur $2/\\|w\\|$ ")
+    ax.set_title("Marge maximale : largeur $2/\\|w\\|$")
     ax.legend(loc="lower right", fontsize=8)
     fig.tight_layout()
     fig.savefig(ASSETS / "05-svm-marge.png", dpi=150)
@@ -133,11 +132,12 @@ def fig_marge(X, t, w, b):
 
 def fig_marge_souple():
     X, t = donnees_separables(seed=5, n=12)
-    # 3 points "fautifs" : un dans la marge, un a la limite, un du mauvais cote
+    # 3 points fautifs : (A) classe - dans la marge mais bien classe,
+    # (B) classe + du mauvais cote, (C) classe - du mauvais cote
     X = X.copy()
-    X[3] = [0.15, 0.05]       # classe - : dans la marge, bon cote ou presque
-    X[15] = [-0.2, -0.45]     # classe + : du mauvais cote
-    X[8] = [0.5, -0.3]        # classe - : franchement du mauvais cote
+    X[3] = [-0.5, -0.4]       # A : classe -, entre z=-1 et z=0
+    X[15] = [-0.9, -1.2]      # B : classe +, franchement cote z<0
+    X[8] = [0.4, 0.9]         # C : classe -, franchement cote z>0
     w, b = svm_hinge(X, t, lam=0.02, lr=0.1, epochs=20000)
     fig, ax = plt.subplots(figsize=(6.5, 5.5))
     nuage(ax, X, t)
@@ -148,16 +148,19 @@ def fig_marge_souple():
     z = X @ w + b
     xi = np.maximum(0, 1 - t * z)
     n2 = w @ w
-    k = 0
-    for i in np.where(xi > 1e-6)[0]:
+    d = np.array([-w[1], w[0]]) / np.sqrt(n2)
+    viol = np.where(xi > 0.2)[0]
+    for k, i in enumerate(viol):
+        col = C_POS if t[i] > 0 else C_NEG
         # projection sur la droite t z = 1 : distance xi/||w||
         proj = X[i] + (xi[i] * t[i] / n2) * w
+        ax.scatter(*X[i], s=260, facecolors="none", edgecolors=col, lw=1.5)
         ax.annotate("", xy=proj, xytext=X[i],
-                    arrowprops=dict(arrowstyle="->", color="k", lw=1.2))
+                    arrowprops=dict(arrowstyle="->", color=col, lw=1.6))
         mid = (X[i] + proj) / 2
-        ax.text(*(mid + np.array([0.12, -0.2])), f"$\\xi_{{{k + 1}}}$",
-                fontsize=12)
-        k += 1
+        ax.text(*(mid + 0.3 * d), f"$\\xi_{{{k + 1}}}$", fontsize=13,
+                color=col, ha="center", va="center",
+                bbox=dict(fc="white", ec="none", pad=0.5, alpha=0.8))
     style(ax)
     ax.set_title("Marge souple : variables d'écart $\\xi_i = \\max(0, 1-t_iz_i)$")
     ax.legend(loc="lower right", fontsize=8)
