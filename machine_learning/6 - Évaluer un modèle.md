@@ -36,7 +36,7 @@ $$\text{accuracy} = \frac{\mathrm{TP}+\mathrm{TN}}{N} \qquad \text{précision} =
 
 ## 1.3 Le piège des classes déséquilibrées
 
-Exemple : deux nuages gaussiens dont la classe positive ne représente que 10 % des points. Sur 1000 points de validation (80 positifs), comparons « toujours négatif » et un MLP `[2, 16, 1]` entraîné sur 100 points :
+Exemple : deux nuages gaussiens dont la classe positive ne représente qu'environ 10 % des points. Sur 1000 points de validation (ici 80 positifs), comparons « toujours négatif » et un MLP `[2, 16, 1]` entraîné sur 100 points :
 
 ![[06-eval-confusion.png]]
 

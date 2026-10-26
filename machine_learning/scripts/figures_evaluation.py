@@ -90,7 +90,7 @@ class MLP:
         return 0.5 * float(np.mean(np.sum((self.predict(X) - t) ** 2, axis=1)))
 
     def error_rate(self, X, t, threshold=0.5):
-        return float(np.mean((self.predict(X) > threshold) != (t > 0.5)))
+        return float(np.mean((self.predict(X) >= threshold) != (t > 0.5)))
 
     def fit(self, X, t, lr, epochs, X_val=None, t_val=None):
         h = {"train": [], "val": [], "err_train": [], "err_val": []}
