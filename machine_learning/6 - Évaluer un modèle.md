@@ -30,7 +30,16 @@ Trois mesures en découlent :
 
 ## Le piège des classes déséquilibrées
 
-Si seulement 8 % des exemples sont positifs, le classifieur qui répond **toujours « négatif »** a une accuracy de 92 %… et ne détecte rien.
+Dépistage d'un cancer : sur 1000 personnes testées, 10 sont malades. Un « test » qui répond **toujours « sain »** donne :
+
+| | prédit malade | prédit sain |
+|---|---|---|
+| **malade** | TP = 0 | FN = 10 |
+| **sain** | FP = 0 | TN = 990 |
+
+Accuracy $= 990/1000 = 99\,\%$… et rappel $= 0$ : il ne détecte **aucun** cancer. Un vrai test, qui détecte 8 malades sur 10 au prix de 30 fausses alertes, a une accuracy *plus basse* ($968/1000 = 96.8\,\%$) mais il est infiniment plus utile (rappel $0.8$).
+
+Le même phénomène sur des données synthétiques (celles du TD07, 8 % de positifs) :
 
 ![[06-eval-confusion.png]]
 
@@ -38,7 +47,7 @@ Si seulement 8 % des exemples sont positifs, le classifieur qui répond **toujou
 > Quand une classe est rare, il faut regarder la matrice de confusion en entier, ou au moins précision et rappel.
 
 > [!info] Le seuil
-> Le seuil $0.5$ est un choix. Le baisser fait prédire « positif » plus souvent : le rappel monte, la précision baisse. Pour un détecteur de fraude, on préfère rater peu de fraudes (rappel élevé), quitte à avoir plus de fausses alertes.
+> Le seuil $0.5$ est un choix. Le baisser fait prédire « positif » plus souvent : le rappel monte, la précision baisse. Pour un dépistage de cancer, rater un malade (FN) est bien plus grave qu'une fausse alerte (FP), qui coûte seulement un examen complémentaire : on choisit un seuil bas, pour un rappel élevé.
 
 ---
 # 2. Courbes d'apprentissage
