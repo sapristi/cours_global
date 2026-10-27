@@ -49,6 +49,56 @@ Le même phénomène sur des données synthétiques (celles du TD07, 8 % de posi
 > [!info] Le seuil
 > Le seuil $0.5$ est un choix. Le baisser fait prédire « positif » plus souvent : le rappel monte, la précision baisse. Pour un dépistage de cancer, rater un malade (FN) est bien plus grave qu'une fausse alerte (FP), qui coûte seulement un examen complémentaire : on choisit un seuil bas, pour un rappel élevé.
 
+> [!example] Exercice : quel modèle choisir ?
+> Pour chaque cas d'usage, on compare deux modèles testés sur le même jeu de test de 1000 exemples. Papier-crayon, pas de code.
+>
+> **Cas A : détection d'intrusion réseau.** La classe positive est « connexion malveillante » (20 sur 1000). Une intrusion non détectée peut compromettre tout le réseau ; une fausse alerte coûte seulement quelques minutes d'analyse.
+>
+> | Modèle A1 | prédit intrusion | prédit normal |
+> |---|---|---|
+> | **intrusion** | TP = 10 | FN = 10 |
+> | **normal** | FP = 0 | TN = 980 |
+>
+> | Modèle A2 | prédit intrusion | prédit normal |
+> |---|---|---|
+> | **intrusion** | TP = 18 | FN = 2 |
+> | **normal** | FP = 30 | TN = 950 |
+>
+> **Cas B : filtre anti-spam avec quarantaine.** La classe positive est « spam » (100 sur 1000). Les mails prédits spam sont mis en quarantaine, que personne ne relit : un vrai mail y est perdu. Laisser passer un spam est seulement agaçant.
+>
+> | Modèle B1 | prédit spam | prédit légitime |
+> |---|---|---|
+> | **spam** | TP = 90 | FN = 10 |
+> | **légitime** | FP = 60 | TN = 840 |
+>
+> | Modèle B2 | prédit spam | prédit légitime |
+> |---|---|---|
+> | **spam** | TP = 60 | FN = 40 |
+> | **légitime** | FP = 15 | TN = 885 |
+>
+> 1. Calculer l'accuracy, la précision et le rappel des quatre modèles.
+> 2. Pour chaque cas, quel modèle choisir ? Justifier en s'appuyant sur le coût de chaque type d'erreur.
+> 3. Dans l'un des deux cas, le modèle qui a la meilleure accuracy n'est pas le bon choix. Lequel, et pourquoi ?
+
+> [!example]- Correction
+> **1. Mesures**
+>
+> | Modèle | accuracy | précision | rappel |
+> |---|---|---|---|
+> | A1 | $990/1000 = 99\,\%$ | $10/10 = 1$ | $10/20 = 0.5$ |
+> | A2 | $968/1000 = 96.8\,\%$ | $18/48 = 0.375$ | $18/20 = 0.9$ |
+> | B1 | $930/1000 = 93\,\%$ | $90/150 = 0.6$ | $90/100 = 0.9$ |
+> | B2 | $945/1000 = 94.5\,\%$ | $60/75 = 0.8$ | $60/100 = 0.6$ |
+>
+> **2. Choix**
+>
+> - **Cas A : A2.** Ici rater une intrusion (FN) est le coût principal, donc on veut un rappel élevé. A2 en détecte 18 sur 20 (rappel $0.9$), A1 seulement la moitié. A2 fait 30 fausses alertes, ce qui se paie en temps d'analyse mais reste supportable.
+> - **Cas B : B2.** Ici le coût principal est le vrai mail mis en quarantaine (FP), donc on veut une précision élevée. Dans B2, 80 % des mails mis en quarantaine sont bien des spams (B1 : 60 %, soit 60 mails légitimes perdus contre 15). B2 laisse passer plus de spams (40 contre 10), ce qui est le moindre mal.
+>
+> **3.** C'est le cas A : A1 a la meilleure accuracy ($99\,\%$ contre $96.8\,\%$) mais détecte une intrusion sur deux seulement. Avec 98 % de connexions normales, l'accuracy récompense surtout le fait de bien classer les cas normaux ; elle cache les FN. Dans le cas B, B2 est meilleur à la fois en accuracy et en précision : l'accuracy ne contredit pas le bon choix, mais l'écart entre B1 et B2 ($1.5$ point) ne rend pas compte de la différence de 45 mails légitimes perdus.
+>
+> Le « bon » modèle dépend donc du coût des erreurs : rappel pour A, précision pour B.
+
 ---
 # 2. Courbes d'apprentissage
 
