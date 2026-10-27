@@ -91,6 +91,17 @@ VecInt = np.ndarray[tuple[int], np.dtype[np.int64]]       # vecteur 1D d'entiers
 - La forme garde un commentaire quand elle porte un sens métier : `W: Mat  # (K, d)`.
 - Pour une fonction **élément par élément** (activation `sigmoid_prime`, `tanh_prime`…), l'entrée et la sortie ont la même forme : type-la selon son usage (`Mat` si appliquée aux pré-activations d'un batch).
 
+## Docstrings
+
+Dans les docstrings, citer le code (noms, expressions) entre backticks **simples**, comme en markdown, jamais doubles (style reST) :
+
+```python
+# ❌
+"""Probabilités supérieures ou égales à ``threshold``."""
+# ✅
+"""Probabilités supérieures ou égales à `threshold`."""
+```
+
 ## Cellule « à exécuter » (affichage / résultat)
 
 Quand une cellule ne demande **pas** d'écrire de code — elle affiche une figure, un résultat déjà calculé, illustre une notion — ne la formule pas comme un exercice :
