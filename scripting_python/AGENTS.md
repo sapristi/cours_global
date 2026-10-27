@@ -1,17 +1,17 @@
 # AGENTS.md — scripting_python
 
-Cours de scripting Python pour la cybersécurité (3e année). Vault Obsidian :
-`cours scripting python/`.
+Cours de scripting Python pour la cybersécurité (3e année). Les fichiers de cours
+sont à la racine de `scripting_python/` (vault Obsidian = racine du dépôt).
 Conventions générales (Obsidian, export, Python) : voir `AGENTS.md` à la racine.
 
 ## Structure
 
-- `cours scripting python/Entrypoint.md` : objectifs + plan.
-- `cours scripting python/N. <Titre>.md` = un module de cours. Frontmatter requis : `durée (h)` (nombre) + `Contexte` (texte, source du plan).
-- `cours scripting python/N. <Titre>/` (même nom que le `.md`) = assets du module (slides, images, énoncés/TP).
+- `Entrypoint.md` : objectifs + plan.
+- `N. <Titre>.md` = un module de cours. Frontmatter requis : `durée (h)` (nombre) + `Contexte` (texte, source du plan).
+- `assets/` = images et autres ressources des modules ; `Exercices/` = énoncés complémentaires.
 - `td/` = notebooks des TD, nommés `NN_<theme>.ipynb` (à plat, préfixe numéroté). Ce sont les **corrigés** (solutions incluses), avec leurs fichiers de données (`.csv`) à côté.
-- `cours scripting python/Cours.base` = config Bases/Dataview du tableau de bord (`file.folder == "/"`, `file.ext == "md"`). Ne pas éditer comme du contenu.
-- Images : `![[Pasted image ....png|largeur]]` (embed Obsidian + resize). Stocker dans le dossier correspondant.
+- `Cours.base` = config Bases/Dataview du tableau de bord (`file.folder == "/"`, `file.ext == "md"`). Ne pas éditer comme du contenu.
+- Images : `![[Pasted image ....png|largeur]]` (embed Obsidian + resize). Stocker dans `assets/`.
 - Slides : source `.typ` (Typst), compilée en `.pdf` à côté. Éditer le `.typ`, jamais le `.pdf` ; recompiler : `typst compile "<fichier>.typ"`.
 
 ## Conventions
