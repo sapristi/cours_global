@@ -102,9 +102,9 @@ Le même phénomène sur des données synthétiques (celles du TD07, 8 % de posi
 ---
 # 2. Courbes d'apprentissage
 
-Comme dans [[1 - Qu'est-ce qu'apprendre ?]], on garde une partie des données **de côté** : le réseau ne s'entraîne jamais dessus. On appelle ces données la **validation** (la raison de ce nom est en section 4).
+Comme dans [[1 - Qu'est-ce qu'apprendre ?]], on garde une partie des données **de côté**, le jeu de **test** : le réseau ne s'entraîne jamais dessus, on s'en sert seulement pour mesurer l'erreur sur des données nouvelles.
 
-Une **courbe d'apprentissage** trace l'erreur en fonction des époques, pour l'entraînement **et** la validation, sur le même graphe.
+Une **courbe d'apprentissage** trace l'erreur en fonction des époques, pour l'entraînement **et** le test, sur le même graphe.
 
 ![[06-eval-courbe-apprentissage.png]]
 
@@ -112,11 +112,11 @@ On y lit trois phases :
 
 - **sous-apprentissage** : les deux erreurs sont hautes, le réseau n'a pas encore appris ;
 - **bon régime** : les deux baissent ensemble ;
-- **surapprentissage** : l'erreur d'entraînement continue de baisser, mais celle de validation **remonte**. Le réseau apprend par cœur les points d'entraînement, y compris leur bruit.
+- **surapprentissage** : l'erreur d'entraînement continue de baisser, mais celle de test **remonte**. Le réseau apprend par cœur les points d'entraînement, y compris leur bruit.
 
 Une courbe qui **oscille** ou qui **explose** signale une descente instable : pas $\eta$ trop grand.
 
-> [!info] Ce qui compte, c'est la courbe de validation
+> [!info] Ce qui compte, c'est la courbe de test
 > L'erreur d'entraînement baisse presque toujours. C'est l'erreur sur les données mises de côté qui dit si le réseau généralise.
 
 ---
@@ -128,7 +128,7 @@ Pour voir l'effet de l'élan, on entraîne deux fois **dans les mêmes condition
 
 ![[06-eval-elan-lunes.png]]
 
-- Avec élan, les courbes descendent **plus vite** (ici environ 4 fois moins d'époques pour atteindre le minimum de validation).
+- Avec élan, les courbes descendent **plus vite** (ici environ 4 fois moins d'époques pour atteindre le minimum du coût de test).
 - Le surapprentissage arrive donc **plus tôt**, lui aussi.
 - Le minimum atteint est **à peu près le même** : l'élan va plus vite, il ne va pas plus loin.
 - Il aide à sortir des **plateaux**, où la descente sans élan avance très lentement.
@@ -140,9 +140,9 @@ Pour voir l'effet de l'élan, on entraîne deux fois **dans les mêmes condition
 ---
 # 4. Régler les hyper-paramètres : train / validation / test
 
-$\eta$, $\mu$, le nombre d'époques, le seuil sont des **hyper-paramètres** : on les choisit, la descente de gradient ne les apprend pas. On les choisit en regardant les courbes de validation.
+$\eta$, $\mu$, le nombre d'époques, le seuil sont des **hyper-paramètres** : on les choisit, la descente de gradient ne les apprend pas. On est tenté de les choisir en regardant les courbes de test.
 
-Problème : à force de choisir ce qui marche le mieux sur la validation, on finit par s'adapter à elle. Son score devient optimiste. Pour avoir une mesure honnête, on garde donc un **troisième** jeu, le **test**.
+Problème : à force de choisir ce qui marche le mieux sur le test, on finit par s'adapter à lui. Son score devient optimiste : ce n'est plus un test, c'est devenu un jeu de **validation**. Pour avoir une mesure honnête, on garde donc un **troisième** jeu, jamais regardé, qui sert de vrai test.
 
 ![[06-eval-train-val-test.png]]
 
@@ -157,4 +157,4 @@ Problème : à force de choisir ce qui marche le mieux sur la validation, on fin
 > Le nombre d'époques est un hyper-paramètre comme les autres : on arrête l'entraînement au **minimum de la courbe de validation**, avant le surapprentissage.
 
 > [!example] Pour la pratique
-> Le **TD07** reprend tout cela : matrice de confusion, courbes d'apprentissage sur les lunes, classe `MLPMomentum`, arrêt précoce et évaluation unique sur le test, puis spirales.
+> Le **TD07** reprend les sections 1 à 3 : matrice de confusion, courbes d'apprentissage sur les lunes, classe `MLPMomentum`, spirales. La section 4 (arrêt précoce, évaluation unique sur le test) y est en bonus.

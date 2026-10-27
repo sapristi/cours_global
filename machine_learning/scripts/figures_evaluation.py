@@ -153,7 +153,7 @@ def fig_confusion():
     fig, axes = plt.subplots(1, 2, figsize=(11, 4.6))
     matrice(axes[0], *c0, "« toujours négatif »")
     matrice(axes[1], *c1, "MLP [2, 16, 1]")
-    fig.suptitle("Gaussiennes déséquilibrées, jeu de validation (1000 points, 80 positifs)", y=1.0)
+    fig.suptitle("Gaussiennes déséquilibrées, jeu de test (1000 points, 80 positifs)", y=1.0)
     fig.tight_layout()
     fig.savefig(ASSETS / "06-eval-confusion.png", dpi=150, bbox_inches="tight")
     plt.close(fig)
@@ -210,7 +210,7 @@ def fig_courbe(h):
     ax.axvspan(10, b + 1, color="#cfe8d8", alpha=0.7, lw=0)
     ax.axvspan(b + 1, EPOCHS, color="#f6e3b8", alpha=0.7, lw=0)
     ax.plot(x, h["train"], color=C_TRAIN, ls="--", label="entraînement")
-    ax.plot(x, h["val"], color=C_VAL, label="validation")
+    ax.plot(x, h["val"], color=C_VAL, label="test")
     ax.plot(b + 1, h["val"][b], "o", color=C_VAL, mec="k", ms=9, zorder=5)
     ax.axvline(b + 1, color="k", lw=1, ls=":")
     ax.set_xscale("log")
@@ -219,7 +219,7 @@ def fig_courbe(h):
     ax.set_ylim(0.008, 0.3)
     ax.set_xlabel("époque (échelle log)")
     ax.set_ylabel("coût (échelle log)")
-    ax.annotate(f"arrêt : époque {b + 1}\nmin de validation = {h['val'][b]:.3f}",
+    ax.annotate(f"minimum du coût de test\nà l'époque {b + 1} : {h['val'][b]:.3f}",
                 xy=(b + 1, h["val"][b]), xytext=(60, 0.012), fontsize=10,
                 arrowprops=dict(arrowstyle="->"))
     top = 0.22
@@ -243,7 +243,7 @@ def fig_elan(h0, h9):
         ax.plot(x, h["val"], color=c, label=f"{nom}")
         ax.plot(b + 1, h["val"][b], "o", color=c, mec="k", ms=9, zorder=5)
         ax.vlines(b + 1, 0.0095, h["val"][b], color=c, lw=1, ls=":")
-        ax.text(b + 1, 0.0092, f"{nom}\narrêt : {b + 1} étapes\nmin = {h['val'][b]:.4f}",
+        ax.text(b + 1, 0.0092, f"{nom}\nmin après {b + 1} étapes\n= {h['val'][b]:.4f}",
                 ha="left" if c == C_TRAIN else "right", va="top", fontsize=10, color=c)
         print(f"mu={nom}: min val {h['val'][b]:.4f} apres {b + 1} etapes ; fin val {h['val'][-1]:.4f}")
     ax.set_xscale("log")
@@ -252,7 +252,7 @@ def fig_elan(h0, h9):
     ax.set_xlabel("époque (échelle log)")
     ax.set_ylabel("coût (échelle log)")
     ax.legend(loc="upper right", fontsize=9)
-    ax.set_title("Lunes : même graine, même $\\eta$, mêmes données (trait plein : validation, tirets : entraînement)", fontsize=10)
+    ax.set_title("Lunes : même graine, même $\\eta$, mêmes données (trait plein : test, tirets : entraînement)", fontsize=10)
     ax.grid(alpha=0.3)
     fig.tight_layout()
     fig.savefig(ASSETS / "06-eval-elan-lunes.png", dpi=150)
