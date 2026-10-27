@@ -10,110 +10,92 @@ Contexte: |-
 ---
 
 > [!abstract] Objectif de cette partie
-> Mesurer la qualité d'un classifieur **sans se mentir** : matrice de confusion et métriques adaptées aux classes déséquilibrées, protocole train / validation / test, lecture des courbes d'apprentissage (surapprentissage, arrêt précoce), et effet de l'élan vu à travers ces courbes.
+> Savoir dire si un classifieur est bon : compter ses erreurs (matrice de confusion), suivre l'apprentissage avec des courbes, y lire l'effet de l'élan. En fin de partie : comment régler les hyper-paramètres sans se tromper soi-même.
 
 ---
-# 1. Évaluer un classifieur binaire
+# 1. Compter les erreurs : la matrice de confusion
 
-## 1.1 La matrice de confusion
-
-On appelle classe **positive** la classe d'intérêt (la fraude, la maladie, l'intrusion…). La sortie sigmoïde $y$ est seuillée à $0.5$ : on prédit « positif » si $y \ge 0.5$. En comparant prédictions et cibles $t$, on obtient quatre comptes :
+On appelle classe **positive** la classe qu'on cherche à détecter (la fraude, la maladie…). Le réseau prédit « positif » si sa sortie $y \ge 0.5$. En comparant prédictions et cibles $t$, chaque exemple tombe dans une des quatre cases :
 
 | | prédit positif | prédit négatif |
 |---|---|---|
-| **réel positif** | TP (vrais positifs) | FN (faux négatifs) |
-| **réel négatif** | FP (faux positifs) | TN (vrais négatifs) |
+| **réel positif** | TP (vrai positif) | FN (faux négatif) |
+| **réel négatif** | FP (faux positif) | TN (vrai négatif) |
 
-## 1.2 Accuracy, précision, rappel
+Trois mesures en découlent :
 
-Avec $N = \mathrm{TP}+\mathrm{FP}+\mathrm{TN}+\mathrm{FN}$ :
+- **accuracy** (taux de bonne classification) $= \dfrac{\mathrm{TP}+\mathrm{TN}}{N}$ : la part des exemples bien classés ;
+- **précision** $= \dfrac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}}$ : quand le modèle dit « positif », a-t-il raison ?
+- **rappel** $= \dfrac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}}$ : parmi les vrais positifs, combien sont détectés ?
 
-$$\text{accuracy} = \frac{\mathrm{TP}+\mathrm{TN}}{N} \qquad \text{précision} = \frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}} \qquad \text{rappel} = \frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}}$$
+## Le piège des classes déséquilibrées
 
-- **accuracy** (taux de bonne classification) : part des exemples bien classés ;
-- **précision** : parmi les exemples *prédits* positifs, la part qui l'est vraiment ;
-- **rappel** : parmi les vrais positifs, la part détectée.
-
-## 1.3 Le piège des classes déséquilibrées
-
-Exemple : deux nuages gaussiens dont la classe positive ne représente qu'environ 10 % des points. Sur 1000 points de validation (ici 80 positifs), comparons « toujours négatif » et un MLP `[2, 16, 1]` entraîné sur 100 points :
+Si seulement 8 % des exemples sont positifs, le classifieur qui répond **toujours « négatif »** a une accuracy de 92 %… et ne détecte rien.
 
 ![[06-eval-confusion.png]]
 
-« Toujours négatif » ne détecte aucun positif, et pourtant son accuracy vaut $0.920$. Le MLP fait $0.948$ : à peine 2,8 points de mieux, alors qu'il détecte 46 positifs sur 80. L'accuracy ne distingue pas un classifieur inutile d'un classifieur utile.
+> [!danger] Ne pas se fier à l'accuracy seule
+> Quand une classe est rare, il faut regarder la matrice de confusion en entier, ou au moins précision et rappel.
 
-> [!danger] Accuracy seule = piège
-> Sur des classes déséquilibrées, un classifieur trivial a une très bonne accuracy. Il faut lire **précision et rappel** (donc la matrice de confusion en entier).
-
-## 1.4 Le seuil arbitre entre précision et rappel
-
-Le seuil $0.5$ est un réglage, pas une fatalité. Baisser le seuil prédit plus de positifs : le rappel monte, la précision baisse. Pour le MLP ci-dessus, passer le seuil de $0.5$ à $0.1$ fait monter le rappel de $0.575$ à $0.888$, mais la précision tombe de $0.719$ à $0.438$.
-
-> [!info] Que privilégier ?
-> Détecteur de fraude : un faux négatif coûte bien plus cher qu'une fausse alerte, on privilégie le **rappel** (seuil bas). Filtre qui bloque des comptes : on privilégie la **précision**. Le choix dépend du coût relatif d'un FN et d'un FP.
+> [!info] Le seuil
+> Le seuil $0.5$ est un choix. Le baisser fait prédire « positif » plus souvent : le rappel monte, la précision baisse. Pour un détecteur de fraude, on préfère rater peu de fraudes (rappel élevé), quitte à avoir plus de fausses alertes.
 
 ---
-# 2. Le protocole train / validation / test
+# 2. Courbes d'apprentissage
 
-Dans [[1 - Qu'est-ce qu'apprendre ?]] (hold-out), on gardait un jeu de test de côté. Mais on veut aussi **régler** le modèle (pas d'apprentissage $\eta$, élan $\mu$, nombre d'époques, seuil) : si on règle sur le test, il devient du train déguisé. On découpe donc en trois jeux.
+Comme dans [[1 - Qu'est-ce qu'apprendre ?]], on garde une partie des données **de côté** : le réseau ne s'entraîne jamais dessus. On appelle ces données la **validation** (la raison de ce nom est en section 4).
 
-![[06-eval-train-val-test.png]]
-
-- **train** : calcule les gradients, modifie les poids ;
-- **validation** : sert à *régler*, on peut la consulter autant de fois que nécessaire ;
-- **test** : sert à *juger* le réglage final, **une seule fois**, à la fin.
-
-> [!danger] Le test reste verrouillé
-> Dès que le test a servi à choisir quelque chose, il devient une validation de plus : son score est optimiste et ne dit plus rien sur des données vraiment nouvelles.
-
-> [!note] Dans le TD07
-> Lunes : 60 points d'entraînement (volontairement peu), 500 de validation, 500 de test. Une fois le réglage figé sur la validation, le test donne une accuracy de $0.902$ (taux d'erreur $0.098$), proche du taux d'erreur de validation ($0.094$) : la validation estimait bien la performance sur des données nouvelles.
-
----
-# 3. Courbes d'apprentissage
-
-## 3.1 Principe
-
-Une **courbe d'apprentissage** trace l'erreur (le coût $E$, ou le taux d'erreur de classement) en fonction des époques, **train et validation sur le même graphe**.
+Une **courbe d'apprentissage** trace l'erreur en fonction des époques, pour l'entraînement **et** la validation, sur le même graphe.
 
 ![[06-eval-courbe-apprentissage.png]]
 
-## 3.2 Les profils
+On y lit trois phases :
 
-- **sous-apprentissage** : coûts d'entraînement et de validation tous deux élevés, le réseau n'a pas encore appris ;
-- **bon régime** : les deux baissent ensemble, avec un écart faible ;
-- **surapprentissage** : le coût d'entraînement continue de baisser mais celui de validation **remonte**, l'écart se creuse : le réseau apprend le bruit des points d'entraînement ;
-- **instabilité** : oscillations ou divergence (pas $\eta$ trop grand, ou, on le verra, élan $\mu$ trop grand).
+- **sous-apprentissage** : les deux erreurs sont hautes, le réseau n'a pas encore appris ;
+- **bon régime** : les deux baissent ensemble ;
+- **surapprentissage** : l'erreur d'entraînement continue de baisser, mais celle de validation **remonte**. Le réseau apprend par cœur les points d'entraînement, y compris leur bruit.
 
-Sur la figure (lunes, 60 points d'entraînement, réseau `[2, 32, 32, 1]`, $\eta = 0.5$, sans élan), le coût de validation passe par un minimum de $0.0389$ après 680 étapes. À la fin (4000 époques), le coût d'entraînement est tombé à $0.0135$ mais celui de validation est remonté à $0.0568$.
+Une courbe qui **oscille** ou qui **explose** signale une descente instable : pas $\eta$ trop grand.
 
-## 3.3 Arrêt précoce (early stopping)
-
-> [!info] Early stopping
-> S'arrêter à l'époque du **minimum de la courbe de validation**. On choisit l'époque sur la validation, jamais sur le test.
-
-> [!note] Coût et taux d'erreur ne racontent pas toujours la même chose
-> Le coût mesure aussi la *confiance* des sorties (une sortie trop sûre d'elle et fausse coûte cher), le taux d'erreur seulement le côté du seuil. Ici le coût de validation est minimal après 680 étapes, mais le taux d'erreur de validation reste sur un long plateau et atteint son minimum plus tard : l'époque d'arrêt dépend de la mesure choisie.
+> [!info] Ce qui compte, c'est la courbe de validation
+> L'erreur d'entraînement baisse presque toujours. C'est l'erreur sur les données mises de côté qui dit si le réseau généralise.
 
 ---
-# 4. L'élan lu à travers les courbes
+# 3. L'élan vu sur les courbes
 
-Rappel de la règle ([[4 - Réseaux de neurones à plusieurs couches#4. Élan]]) :
+Rappel ([[4 - Réseaux de neurones à plusieurs couches#4. Élan]]) : $v \leftarrow \mu\, v + \eta\,\dfrac{\partial E}{\partial W}$, puis $W \leftarrow W - v$.
 
-$$v \leftarrow \mu\, v + \eta\,\frac{\partial E}{\partial W}, \qquad W \leftarrow W - v$$
-
-Pour juger l'élan, on compare **à conditions égales** : mêmes données, même initialisation (graine), même $\eta$, même nombre d'époques ; seul $\mu$ change.
+Pour voir l'effet de l'élan, on entraîne deux fois **dans les mêmes conditions** (mêmes données, même initialisation, même $\eta$) en ne changeant que $\mu$, et on superpose les courbes.
 
 ![[06-eval-elan-lunes.png]]
 
-- L'élan atteint **plus vite** un niveau d'erreur donné : sur les lunes, le minimum de validation est atteint après 173 étapes avec $\mu = 0.9$ contre 680 sans élan, soit environ 4 fois plus tôt.
-- Il entre donc **aussi plus tôt** dans la zone de surapprentissage : l'époque d'arrêt se déplace. À 4000 époques, le coût de validation vaut $0.0762$ avec élan contre $0.0568$ sans.
-- Il change la **vitesse**, pas la **capacité** : le minimum de validation est du même ordre ($0.0415$ contre $0.0389$, pas plus bas).
-- Il aide à traverser les **plateaux** : sur les spirales (TD07, §4), le coût d'entraînement passe sous $0.05$ après 138 étapes avec $\mu = 0.9$ contre 987 sans élan, environ 7 fois plus vite.
-- Un $\mu$ **trop grand** rend la descente instable : sur les lunes, $\mu = 0.99$ oscille au début et son minimum de validation est le moins bon des trois ($0.0497$).
+- Avec élan, les courbes descendent **plus vite** (ici environ 4 fois moins d'époques pour atteindre le minimum de validation).
+- Le surapprentissage arrive donc **plus tôt**, lui aussi.
+- Le minimum atteint est **à peu près le même** : l'élan va plus vite, il ne va pas plus loin.
+- Il aide à sortir des **plateaux**, où la descente sans élan avance très lentement.
+- Un $\mu$ **trop grand** (ex. $0.99$) fait osciller les courbes.
 
 > [!danger] L'élan n'améliore pas le modèle
-> Il ne rend pas le modèle meilleur : il le fait arriver plus vite au même endroit. Son intérêt est d'économiser des étapes de calcul, à condition d'arrêter au bon moment (sur la validation).
+> Il fait arriver plus vite au même endroit : c'est un gain de temps de calcul, pas de qualité.
+
+---
+# 4. Régler les hyper-paramètres : train / validation / test
+
+$\eta$, $\mu$, le nombre d'époques, le seuil sont des **hyper-paramètres** : on les choisit, la descente de gradient ne les apprend pas. On les choisit en regardant les courbes de validation.
+
+Problème : à force de choisir ce qui marche le mieux sur la validation, on finit par s'adapter à elle. Son score devient optimiste. Pour avoir une mesure honnête, on garde donc un **troisième** jeu, le **test**.
+
+![[06-eval-train-val-test.png]]
+
+- **train** : sert à calculer les gradients ;
+- **validation** : sert à **choisir** les hyper-paramètres, autant de fois qu'on veut ;
+- **test** : sert à **juger** le modèle final, **une seule fois**, à la fin.
+
+> [!danger] Le test reste verrouillé
+> Si le test a servi à choisir quoi que ce soit, ce n'est plus un test : son score ne dit plus rien sur des données nouvelles.
+
+> [!info] Arrêt précoce (early stopping)
+> Le nombre d'époques est un hyper-paramètre comme les autres : on arrête l'entraînement au **minimum de la courbe de validation**, avant le surapprentissage.
 
 > [!example] Pour la pratique
-> Le **TD07** reprend ces quatre notions : matrice de confusion et métriques à implémenter, courbes d'apprentissage sur les lunes, classe `MLPMomentum`, early stopping, évaluation unique sur le test, puis spirales.
+> Le **TD07** reprend tout cela : matrice de confusion, courbes d'apprentissage sur les lunes, classe `MLPMomentum`, arrêt précoce et évaluation unique sur le test, puis spirales.
