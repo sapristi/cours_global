@@ -7,11 +7,11 @@ Obsidian. Contenu pédagogique en français.
 ## Structure du dépôt
 
 - `machine_learning/` : cours de machine learning.
-  - `cours_ml/` = vault Obsidian (cours en markdown ; figures dans `cours_ml/assets/`, scripts de génération de figures dans `cours_ml/scripts/`).
+  - Les cours en markdown (`N - <Titre>.md`) sont directement à la racine du dossier (vault Obsidian) ; figures dans `assets/`, scripts de génération de figures dans `scripts/`.
   - `td/` = notebooks des TD (les **corrigés**, solutions incluses), à plat `NN_<theme>.ipynb`.
   - `Entrypoint.md` = objectifs + plan.
 - `scripting_python/` : cours de scripting Python (cybersécurité).
-  - `cours scripting python/` = vault Obsidian (`N. <Titre>.md` = module de cours, `N. <Titre>/` = assets du module).
+  - Les modules de cours (`N. <Titre>.md`) sont directement à la racine du dossier (vault Obsidian) ; `assets/` = assets des modules.
   - `td/` = notebooks des TD (les **corrigés**, solutions incluses), à plat `NN_<theme>.ipynb` + fichiers de données.
   - `Entrypoint.md` = objectifs + plan.
 - `scripts/` = scripts mutualisés (voir plus bas).

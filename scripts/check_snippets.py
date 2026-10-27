@@ -7,7 +7,7 @@ Les blocs REPL (contenant >>>) sont ignorés.
 Usage :
     python3 scripts/check_snippets.py                      # tous les cours (défaut)
     python3 scripts/check_snippets.py <CHEMIN ...>         # fichiers ou dossiers
-    python3 scripts/check_snippets.py "scripting_python/cours scripting python"
+    python3 scripts/check_snippets.py scripting_python
 
 Sortie : 0 si tout est OK, 1 si au moins un bloc est en erreur.
 """
@@ -22,8 +22,8 @@ RACINE = Path(__file__).resolve().parent.parent
 
 # Dossiers markdown des cours, parcourus par défaut.
 SOURCES = [
-    RACINE / "machine_learning" / "cours_ml",
-    RACINE / "scripting_python" / "cours scripting python",
+    RACINE / "machine_learning",
+    RACINE / "scripting_python",
 ]
 
 # ```python ou ```py, éventuellement préfixé par "> " (callout Obsidian).
@@ -86,7 +86,7 @@ def collecter_md(cibles: list[str]) -> list[Path]:
         else:
             print(f"cible introuvable : {cible}", file=sys.stderr)
     # Exclut le workspace Obsidian et les dossiers de build/environnement.
-    exclus = (".obsidian", ".git", "dist", "content", "node_modules", ".venv", ".ipynb_checkpoints", "__pycache__")
+    exclus = (".obsidian", ".git", "dist", "content", "docs", "td", "td_pandas", "devoir", "node_modules", ".venv", ".ipynb_checkpoints", "__pycache__")
     return [f for f in fichiers if not any(part in exclus for part in f.parts)]
 
 
