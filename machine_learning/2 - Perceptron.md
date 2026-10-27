@@ -110,3 +110,7 @@ Implémenter une méthode `train`, qui prends un entrée un jeu de données d'en
 
 ### [!faq] Exercice 6
 Généraliser l'implémentation du perceptron à une dimension quelconque grace à numpy.
+
+
+# Notes
+- passer le poids du biais à 1 au lieu de -1

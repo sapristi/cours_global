@@ -15,7 +15,7 @@ Contexte: |-
 ---
 # 1. Compter les erreurs : la matrice de confusion
 
-On appelle classe **positive** la classe qu'on cherche à détecter (la fraude, la maladie…). Le réseau prédit « positif » si sa sortie $y \ge 0.5$. En comparant prédictions et cibles $t$, chaque exemple tombe dans une des quatre cases :
+On appelle classe **positive** la classe qu'on cherche à détecter (la fraude, la maladie…). En comparant prédictions et cibles $t$, chaque exemple tombe dans une des quatre cases :
 
 | | prédit positif | prédit négatif |
 |---|---|---|
@@ -30,24 +30,18 @@ Trois mesures en découlent :
 
 ## Le piège des classes déséquilibrées
 
-Dépistage d'un cancer : sur 1000 personnes testées, 10 sont malades. Un « test » qui répond **toujours « sain »** donne :
-
-| | prédit malade | prédit sain |
-|---|---|---|
-| **malade** | TP = 0 | FN = 10 |
-| **sain** | FP = 0 | TN = 990 |
-
-Accuracy $= 990/1000 = 99\,\%$… et rappel $= 0$ : il ne détecte **aucun** cancer. Un vrai test, qui détecte 8 malades sur 10 au prix de 30 fausses alertes, a une accuracy *plus basse* ($968/1000 = 96.8\,\%$) mais il est infiniment plus utile (rappel $0.8$).
-
-Le même phénomène sur des données synthétiques (celles du TD07, 8 % de positifs) :
-
-![[06-eval-confusion.png]]
-
 > [!danger] Ne pas se fier à l'accuracy seule
 > Quand une classe est rare, il faut regarder la matrice de confusion en entier, ou au moins précision et rappel.
 
-> [!info] Le seuil
-> Le seuil $0.5$ est un choix. Le baisser fait prédire « positif » plus souvent : le rappel monte, la précision baisse. Pour un dépistage de cancer, rater un malade (FN) est bien plus grave qu'une fausse alerte (FP), qui coûte seulement un examen complémentaire : on choisit un seuil bas, pour un rappel élevé.
+Exemple fictif:  
+Deux tests différents pour le dépistage du cancer, qui touche 1% de la population.
+1. **T1**: Un test qui réponds **toujours « sain »** a une accuracy de 99%.
+2. **T2**: Un test qui détecte 8 malades sur 10 au prix de 30 fausses alertes, a une accuracy *plus basse* ($968/1000 = 96.8\,\%$) 
+
+Comparer le rappel donne une meilleure représentation des performance des modèles:
+1. **T1**:Le rappel est de 0
+2. **T2**:Le rappel est de  $0.8$ (i.e. 80%)
+
 
 > [!example] Exercice : quel modèle choisir ?
 > Pour chaque cas d'usage, on compare deux modèles testés sur le même jeu de test de 1000 exemples. Papier-crayon, pas de code.

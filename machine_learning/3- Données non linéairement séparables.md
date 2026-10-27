@@ -9,7 +9,7 @@ Contexte: |-
   Partie 4 : comprendre l'échec du linéaire, introduire l'idée de projection
   non linéaire, et préparer les parties 5 (MLP) et 6 (RBF).
 ---
-> [!abstract] Objectif de cette partie
+²> [!abstract] Objectif de cette partie
 > Montrer que le perceptron échoue dès que les données ne sont pas linéairement séparables, introduire l'idée centrale du cours : **projeter avec $\Phi(x)$ dans un espace plus grand où ça le devient**. Voir le prix à payer : **complexification et surapprentissage**.
 
 # 1. Limite du modèle linéaire

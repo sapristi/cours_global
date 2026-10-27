@@ -227,6 +227,24 @@ def forward(self, X):
 - Si seul des indices (`##`) sont présents, un `pass` est ajouté pour éviter un corps vide.
 - ⚠️ Tout commentaire en **première ligne** d'une solution sera dé-commenté : pour un commentaire ordinaire, écris-le avant `# BEGIN` ou utilise `##`.
 
+### Variables attendues dans une cellule (hors fonction)
+
+Quand le TODO doit définir des variables utilisées ensuite (affichage, vérification, exercices suivants), le corps du TODO les **nomme explicitement** sous forme de squelette `# var = ...`, précédé d'un rappel (`##`) des variables disponibles. Pas de `# raise NotImplementedError` : le squelette en tient lieu.
+
+```python
+# BEGIN
+## Rappel : Xb_tr, tb_tr : données et cibles d'entraînement
+# y_zero = ...
+# model = ...
+# ...
+# y_mlp = ...
+y_zero = np.zeros(len(tb_te))
+...
+# END
+```
+
+Pour une boucle qui remplit un dictionnaire, le squelette donne la boucle et la clé : `# for name, mu in MUS.items():` puis `#     hists[name] = ...`. Ne pas déclarer les placeholders `var = ...` hors du bloc (ils resteraient dans le corrigé).
+
 ## Erreurs courantes
 
 - Marqueur `# BEGIN`/`# END` dans une cellule markdown → ignoré (le filtre ne traite que le code).

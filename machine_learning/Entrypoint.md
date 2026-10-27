@@ -1,4 +1,6 @@
-# Contexte
+> [!note] La numérotation est indicative : le cours ne la reflète pas forcément exactement.
+
+ # Contexte
 Cours pour des étudiants de 4e année post-bac. 18h au total.
 On utilisera python / numpy. 
 ## Objectif matière

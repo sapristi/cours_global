@@ -1,6 +1,6 @@
 # AGENTS.md — machine_learning
 
-Cours de machine learning (4e année). Vault Obsidian : `cours_ml/`.
+Cours de machine learning (4e année).
 Conventions générales (Obsidian, export, Python) : voir `AGENTS.md` à la racine.
 
 ## Standards de notation (notebooks)
@@ -22,7 +22,7 @@ Règle clé : la **cible** se note toujours `t` (jamais `y`) ; `y` est réservé
 
 ## Organisation
 
-- `cours_ml/` : cours au format markdown (interprété par Obsidian). Fichiers `*.md` à la racine, figures dans `cours_ml/assets/`, scripts de génération de figures dans `cours_ml/scripts/`.
+-  Fichiers `*.md` à la racine: cours au format markdown (interprété par Obsidian). Figures dans `assets/`
 - `td/` : notebooks des travaux dirigés, nommés `NN_<theme>.ipynb` (à plat). Ce sont les **corrigés** (solutions incluses).
 - `td/assets/` : images extraites des notebooks (via `scripts/notebooks.py --td machine_learning/td extract`).
 
