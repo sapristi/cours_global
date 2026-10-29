@@ -1,12 +1,12 @@
 ---
-titre: 6 - Évaluer un modèle
+titre: 5 - Évaluer un modèle
 cours: "[[Entrypoint]]"
-partie: 6
+partie: 5
 statut: draft
 Contexte: |-
   4e année post-bac, 18h au total.
   Suite de [[1 - Qu'est-ce qu'apprendre ?]] (hold-out) et de [[4 - Réseaux de neurones à plusieurs couches]] (élan).
-  Séance : ~30 min de cours, puis TD07 (matrice de confusion, courbes d'apprentissage, élan).
+  Séance : ~30 min de cours, puis TD04 (matrice de confusion, courbes d'apprentissage, élan).
 ---
 
 > [!abstract] Objectif de cette partie
@@ -96,6 +96,11 @@ Comparer le rappel donne une meilleure représentation des performance des modè
 ---
 # 2. Courbes d'apprentissage
 
+> [!info] Sortie du réseau et classification
+> Pour un classifieur binaire, la sortie du réseau (activation sigmoïde) est une valeur dans $[0, 1]$, et non une classe. C'est sur cette sortie continue que l'apprentissage s'effectue : le coût $E = \frac12 (y - t)^2$ est calculé dessus, et il doit être dérivable pour la descente de gradient.
+>
+> Pour obtenir une classification dans $\{0, 1\}$, on ajoute un **seuil** après la sortie du réseau : classe 1 si la sortie dépasse $0.5$, classe 0 sinon. Ce seuil n'intervient pas dans l'apprentissage ; il sert seulement à décider, et c'est sur ces décisions qu'on compte les erreurs de la matrice de confusion.
+
 Comme dans [[1 - Qu'est-ce qu'apprendre ?]], on garde une partie des données **de côté**, le jeu de **test** : le réseau ne s'entraîne jamais dessus, on s'en sert seulement pour mesurer l'erreur sur des données nouvelles.
 
 Une **courbe d'apprentissage** trace l'erreur en fonction des époques, pour l'entraînement **et** le test, sur le même graphe.
@@ -108,7 +113,7 @@ On y lit trois phases :
 - **bon régime** : les deux baissent ensemble ;
 - **surapprentissage** : l'erreur d'entraînement continue de baisser, mais celle de test **remonte**. Le réseau apprend par cœur les points d'entraînement, y compris leur bruit.
 
-Une courbe qui **oscille** ou qui **explose** signale une descente instable : pas $\eta$ trop grand.
+Une courbe qui **oscille** ou qui **explose** signale une descente instable : par exemple du à $\eta$ (taux d'apprentissage) trop grand.
 
 > [!info] Ce qui compte, c'est la courbe de test
 > L'erreur d'entraînement baisse presque toujours. C'est l'erreur sur les données mises de côté qui dit si le réseau généralise.
@@ -151,4 +156,4 @@ Problème : à force de choisir ce qui marche le mieux sur le test, on finit par
 > Le nombre d'époques est un hyper-paramètre comme les autres : on arrête l'entraînement au **minimum de la courbe de validation**, avant le surapprentissage.
 
 > [!example] Pour la pratique
-> Le **TD07** reprend les sections 1 à 3 : matrice de confusion, courbes d'apprentissage sur les lunes, classe `MLPMomentum`, spirales. La section 4 (arrêt précoce, évaluation unique sur le test) y est en bonus.
+> Le **TD04** reprend les sections 1 à 3 : matrice de confusion, courbes d'apprentissage sur les lunes, classe `MLPMomentum`, spirales. La section 4 (arrêt précoce, évaluation unique sur le test) y est en bonus.

@@ -1,7 +1,7 @@
 """Figures du chapitre 6 (Évaluer un modèle) -> assets/06-eval-*.png.
 
 Usage : uv run python machine_learning/scripts/figures_evaluation.py
-Générateurs, MLP et réglages copiés du TD 07 (mêmes graines : mêmes chiffres).
+Générateurs, MLP et réglages copiés du TD 04 (mêmes graines : mêmes chiffres).
 Notation : cible t, sortie y, lr = eta, élan mu.
 """
 from pathlib import Path
@@ -18,7 +18,7 @@ C_TRAIN, C_VAL, C_TEST = "#0072b2", "#d55e00", "#009e73"
 C_GRIS = "#888888"
 
 
-# ---------------------------------------------------------------- TD 07
+# ---------------------------------------------------------------- TD 04
 def make_blobs_imbalanced(n, noise=0.6, pos_frac=0.1, seed=1):
     rng = np.random.default_rng(seed)
     lab = (rng.uniform(size=n) < pos_frac).astype(float)

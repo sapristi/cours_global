@@ -1,7 +1,7 @@
 ---
-titre: 5 - Support Vector Machines
+titre: 6 - Support Vector Machines
 cours: "[[Entrypoint]]"
-partie: 5
+partie: 6
 statut: draft
 Contexte: |-
   4e année post-bac, 18h au total.
@@ -14,7 +14,7 @@ Contexte: |-
 
 > [!danger] Changement de convention : cibles $\pm 1$
 > Dans tout ce chapitre (et au TD05), les cibles valent $t \in \{-1, +1\}$, et non plus $\{0, 1\}$ comme au [[2 - Perceptron|chapitre 2]] et au TD01. Avec le score $z = w \cdot x + b$, la sortie est $y = \text{sign}(z)$.
-> Intérêt : un point est **bien classé** si et seulement si $t\,z > 0$. Une seule inégalité pour les deux classes.
+> Intérêt : un point est **bien classé** si et seulement si $t\,z > 0$. 
 
 # 1. Intuition : quelle droite choisir ?
 
