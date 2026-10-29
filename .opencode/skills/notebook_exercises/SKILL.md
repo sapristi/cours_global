@@ -31,14 +31,25 @@ Sert à prévisualiser ce que verra l'étudiant. Écrire l'aperçu hors du repo 
 
 ## Écrire un exercice
 
-Chaque exercice est énoncé dans une **cellule markdown**, sous la forme d'un blockquote numéroté :
+Chaque exercice est énoncé dans une **cellule markdown**, encadré par un `fieldset` dont la `legend` porte le numéro :
 
 ```markdown
-> **Exercice 7** — Complétez `forward` (renvoie X, Z1, Y1, Z2, Y2).
+<fieldset style="border: 3px solid #1976d2; border-radius: 8px; padding: 0 14px; margin: 12px 0">
+<legend style="color: #1976d2; font-weight: bold; font-size: 1.5em; padding: 0 6px">✏️ Exercice 7</legend>
+
+Complétez `forward` (renvoie X, Z1, Y1, Z2, Y2).
+
+</fieldset>
 ```
 
+- Recopier les deux balises ouvrantes **telles quelles** (styles identiques sur tout le notebook) ; seul le titre de la `legend` change.
+- **Lignes vides obligatoires** après `</legend>` et avant `</fieldset>` : sans elles, JupyterLab n'interprète pas le markdown de l'énoncé (backticks, gras, listes, `$…$`).
+- Le corps est du markdown normal (paragraphes, listes numérotées), **sans** préfixe `>`.
+- Styles inline uniquement : JupyterLab supprime les balises `<style>` et refuse `var(--jp-…)` dans les styles inline (d'où la couleur codée en dur).
+- Le texte d'introduction ou de contexte reste **hors** du `fieldset`, avant lui.
 - Numérotation **séquentielle** sur tout le notebook (Exercice 1, 2, 3…), lettres pour les sous-étapes (`Exercice 7a`, `7b`, …).
 - L'énoncé nomme précisément ce qu'il faut compléter (fonction/méthode), puis la tâche.
+- Les **questions de lecture** (interpréter une courbe, un résultat — réponse rédigée, sans code) sont aussi des exercices : même encadré, même numérotation séquentielle, titre « Exercice N ». Pas de libellé « Question » ni de numérotation séparée.
 
 ## En cas d'édition, ne pas référencer un état antérieur
 
@@ -107,7 +118,7 @@ Dans les docstrings, citer le code (noms, expressions) entre backticks **simples
 Quand une cellule ne demande **pas** d'écrire de code — elle affiche une figure, un résultat déjà calculé, illustre une notion — ne la formule pas comme un exercice :
 
 - **Pas de verbe à l'impératif** (« Affichez », « Exécutez », « Calculez »…) : cela laisse croire qu'il y a du code à écrire, alors qu'il suffit d'exécuter la cellule.
-- **Pas de blockquote numéroté** `> **Exercice N** — …`.
+- **Pas d'encadré** `<fieldset>` « ✏️ Exercice N ».
 - Préférer une tournure descriptive : « On affiche ici … », « La cellule suivante affiche … », « Vérifiez vos réponses. »
 
 ```markdown
@@ -118,7 +129,7 @@ Affichez les 5 perceptrons de l'exercice 1 et vérifiez vos réponses.
 On affiche ici les 5 perceptrons de l'exercice 1 ; vérifiez vos réponses.
 ```
 
-Réserver l'impératif et la numérotation `Exercice` aux cellules où l'étudiant **écrit** du code.
+Réserver l'impératif et la numérotation `Exercice` aux cellules où l'étudiant **écrit** quelque chose : du code, ou une réponse rédigée (question de lecture).
 
 ## Cellule de vérification
 
@@ -136,6 +147,32 @@ check_forward(m, X)
 ```
 
 - La cellule de vérification **ne doit pas** être dans un bloc `# BEGIN`/`# END` : elle reste visible dans la version diffusée pour l'auto-évaluation.
+- Elle suit **immédiatement** la cellule de l'exercice. La cellule de l'exercice s'arrête au `# END` (seule la mise en place nécessaire, ex. constantes ou dictionnaire à remplir, peut précéder le `# BEGIN`) : tout ce qui exploite le résultat (figures, tableaux, `print`, fonctions utilitaires d'affichage) va dans une **cellule séparée, placée après la vérification**. Ordre : énoncé → exercice → vérification → affichage. L'étudiant valide ainsi son code avant de lire les résultats, et une erreur d'affichage ne masque pas celle de son code.
+
+```python
+# ❌ une seule cellule : solution puis affichage, vérification en dessous
+hists = {"μ=0": hist_plain}
+# BEGIN
+...
+# END
+fig, axes = plt.subplots(1, 2)
+plot_curves(hists, ...)
+
+# ✅ cellule 1 : l'exercice seul
+hists = {"μ=0": hist_plain}
+# BEGIN
+...
+# END
+
+# ✅ cellule 2 : la vérification
+check_hists()
+
+# ✅ cellule 3 : l'affichage
+fig, axes = plt.subplots(1, 2)
+plot_curves(hists, ...)
+```
+
+Dans l'énoncé, annoncer l'affichage en conséquence (« Après la vérification, la cellule suivante affiche … »), pas « la cellule affiche ensuite ».
 - Elle teste ce que l'étudiant vient de coder : comparaison à une implémentation naïve, gradient numérique, `assert` sur une valeur attendue, etc.
 
 ### Tester une fonction d'apprentissage (`fit`/`learn`)
@@ -182,8 +219,8 @@ check_fit_batch()
 
 ## Cellule de réponse `# TOCLEAR`
 
-Pour fournir la réponse du corrigé à une question de lecture, placer juste
-après la question une cellule **markdown** dont la première ligne non vide est
+Pour fournir la réponse du corrigé à une question de lecture (énoncée comme un
+exercice, voir « Écrire un exercice »), placer juste après l'énoncé une cellule **markdown** dont la première ligne non vide est
 exactement `# TOCLEAR`, suivie du texte de la réponse. À la préparation
 (`strip_solutions`, donc `prepare_notebooks.py` et `collect_lite_content.py`),
 ces cellules sont supprimées. Les cellules code ne sont pas concernées, et un
