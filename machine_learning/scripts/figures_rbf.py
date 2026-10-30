@@ -1,4 +1,4 @@
-"""Figures du chapitre 7 (k-NN et reseaux RBF) -> assets/07-rbf-*.png.
+"""Figures du chapitre 6 (k-NN et reseaux RBF) -> assets/07-rbf-*.png.
 
 Usage : uv run python machine_learning/scripts/figures_rbf.py
 Notation : cibles t in {0, 1}, phi(x) = exp(-||x - c||^2 / 2 sigma^2).

@@ -25,7 +25,7 @@ On appelle classe **positive** la classe qu'on cherche à détecter (la fraude, 
 Trois mesures en découlent :
 
 - **accuracy** (taux de bonne classification) $= \dfrac{\mathrm{TP}+\mathrm{TN}}{N}$ : la part des exemples bien classés ;
-- **précision** $= \dfrac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}}$ : quand le modèle dit « positif », a-t-il raison ?
+- **précision** $= \dfrac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}}$ :  quand le modèle dit « positif », a-t-il raison ?
 - **rappel** $= \dfrac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}}$ : parmi les vrais positifs, combien sont détectés ?
 
 ## Le piège des classes déséquilibrées

@@ -1,19 +1,19 @@
 ---
-titre: 6 - Support Vector Machines
+titre: 7 - Support Vector Machines
 cours: "[[Entrypoint]]"
-partie: 6
+partie: 7
 statut: draft
 Contexte: |-
   4e année post-bac, 18h au total.
   Suite de [[2 - Perceptron]] et [[3- Données non linéairement séparables]].
-  Séance de 1h15 : ~25 min de cours, ~50 min de TD (TD05).
+  Séance de 1h15 : ~25 min de cours, ~50 min de TD (TD06).
   Pas de résolution formelle (Lagrangien, dual, KKT hors programme).
 ---
 > [!abstract] Objectif de cette partie
 > Comprendre **pourquoi** le SVM choisit une séparation particulière, la **marge maximale** ; **comment** on l'écrit comme un problème d'optimisation ; et pourquoi c'est, au fond, un **perceptron amélioré** que l'on entraîne par descente de gradient.
 
 > [!danger] Changement de convention : cibles $\pm 1$
-> Dans tout ce chapitre (et au TD05), les cibles valent $t \in \{-1, +1\}$, et non plus $\{0, 1\}$ comme au [[2 - Perceptron|chapitre 2]] et au TD01. Avec le score $z = w \cdot x + b$, la sortie est $y = \text{sign}(z)$.
+> Dans tout ce chapitre (et au TD06), les cibles valent $t \in \{-1, +1\}$, et non plus $\{0, 1\}$ comme au [[2 - Perceptron|chapitre 2]] et au TD01. Avec le score $z = w \cdot x + b$, la sortie est $y = \text{sign}(z)$.
 > Intérêt : un point est **bien classé** si et seulement si $t\,z > 0$. 
 
 # 1. Intuition : quelle droite choisir ?
@@ -70,9 +70,9 @@ C'est un problème de **programmation quadratique** : objectif quadratique, cont
 
 ## 3.1 Variables d'écart
 
-Si les données ne sont pas séparables (bruit, point aberrant), les contraintes $t_i z_i \ge 1$ sont impossibles à satisfaire toutes. On autorise chaque point à violer sa contrainte d'une quantité $\xi_i \ge 0$ (variable d'écart), que l'on fait payer :
+Si les données ne sont pas séparables (bruit, point aberrant), les contraintes $t_i z_i \ge 1$ sont impossibles à satisfaire toutes. On autorise chaque point à violer sa contrainte d'une quantité $\xi_i \ge 0$ (variable d'écart), et l'on fait payer $C$ fois la violation moyenne :
 
-$$\min_{w,\,b,\,\xi} \ \frac{1}{2}\|w\|^2 + C \sum_{i=1}^N \xi_i \quad \text{s.c.} \quad t_i (w \cdot x_i + b) \ge 1 - \xi_i, \quad \xi_i \ge 0$$
+$$\min_{w,\,b,\,\xi} \ \frac{1}{2}\|w\|^2 + \frac{C}{N} \sum_{i=1}^N \xi_i \quad \text{s.c.} \quad t_i (w \cdot x_i + b) \ge 1 - \xi_i, \quad \xi_i \ge 0$$
 
 ![[assets/05-svm-marge-souple.png]]
 
@@ -93,12 +93,11 @@ $$\min_{w,\,b,\,\xi} \ \frac{1}{2}\|w\|^2 + C \sum_{i=1}^N \xi_i \quad \text{s.c
 
 ## 3.2 Réécriture sans contraintes : la perte hinge
 
-À l'optimum, chaque $\xi_i$ est le plus petit possible : $\xi_i = \max(0,\ 1 - t_i z_i)$. On remplace dans l'objectif, puis on divise tout par $NC$ (ce qui ne change pas le minimum) :
+À l'optimum, chaque $\xi_i$ est le plus petit possible : $\xi_i = \max(0,\ 1 - t_i z_i)$. On remplace dans l'objectif :
 
-$$E(w, b) = \frac{\lambda}{2}\|w\|^2 + \frac{1}{N} \sum_{i=1}^N \max\big(0,\ 1 - t_i (w \cdot x_i + b)\big)$$
+$$E(w, b) = \frac{1}{2}\|w\|^2 + \frac{C}{N} \sum_{i=1}^N \max\big(0,\ 1 - t_i (w \cdot x_i + b)\big)$$
 
 - $\max(0, 1 - t z)$ est la **perte hinge** (« charnière ») : nulle si le point est au-delà de sa marge ($t z \ge 1$), linéaire sinon.
-- $\lambda = 1/(NC)$ : grand $\lambda$ ⇔ petit $C$ ⇔ marge large.
 - Le biais $b$ n'est **pas** régularisé.
 
 Plus de contraintes : on peut minimiser $E$ par **descente de gradient**, comme d'habitude.
@@ -107,13 +106,13 @@ Plus de contraintes : on peut minimiser $E$ par **descente de gradient**, comme 
 
 La hinge n'est pas dérivable en $t z = 1$ ; on prend la dérivée 0 en ce point (sous-gradient). En notant $z_i = w \cdot x_i + b$ :
 
-$$\frac{\partial E}{\partial w} = \lambda w - \frac{1}{N} \sum_{i \,:\, t_i z_i < 1} t_i\, x_i \qquad\qquad \frac{\partial E}{\partial b} = -\frac{1}{N} \sum_{i \,:\, t_i z_i < 1} t_i$$
+$$\frac{\partial E}{\partial w} = w - \frac{C}{N} \sum_{i \,:\, t_i z_i < 1} t_i\, x_i \qquad\qquad \frac{\partial E}{\partial b} = -\frac{C}{N} \sum_{i \,:\, t_i z_i < 1} t_i$$
 
 puis $w \leftarrow w - \eta \frac{\partial E}{\partial w}$, $b \leftarrow b - \eta \frac{\partial E}{\partial b}$.
 
 > [!example] Lecture (c'est ce qu'on code au TD)
 > - Seuls les points qui **violent leur marge** ($t_i z_i < 1$) contribuent : chacun tire $w$ dans la direction $t_i x_i$, pour se repousser du bon côté.
-> - Le terme $\lambda w$ fait **rétrécir** $w$ à chaque pas, donc élargit la marge $1/\|w\|$ (et la bande $2/\|w\|$).
+> - Le terme $w$ fait **rétrécir** $w$ à chaque pas, donc élargit la marge $1/\|w\|$ (et la bande $2/\|w\|$).
 > - Les points bien au-delà de leur marge n'interviennent pas.
 
 # 4. Lien avec le perceptron
@@ -130,7 +129,7 @@ C'est exactement la **règle de Rosenblatt** du [[2 - Perceptron|chapitre 2]] r�
 |---|---|---|
 | Perte par point | $\max(0, -t z)$ | $\max(0, 1 - t z)$ |
 | Point bien classé mais proche | ignoré | pénalisé (on exige $t z \ge 1$) |
-| Régularisation | aucune | $\frac{\lambda}{2}\|w\|^2$ : maximise la marge |
+| Régularisation | aucune | $\frac{1}{2}\|w\|^2$ : maximise la marge |
 | Données séparables | *une* droite, qui dépend de l'ordre et de l'initialisation | *la* droite de marge maximale |
 | Données bruitées | ne converge pas, oscille | minimise $E$, se stabilise |
 
@@ -146,6 +145,6 @@ Comme au [[3- Données non linéairement séparables|chapitre 3]], remplacer $x$
 > 1. Cibles $t \in \{-1, +1\}$ : bien classé ⇔ $t z > 0$.
 > 2. Parmi tous les séparateurs, le SVM choisit celui de **marge maximale** ; il ne dépend que des **vecteurs de support**.
 > 3. Marge dure : $\min \frac{1}{2}\|w\|^2$ s.c. $t_i z_i \ge 1$ (programmation quadratique, solveurs dédiés).
-> 4. Marge souple : $E(w, b) = \frac{\lambda}{2}\|w\|^2 + \frac{1}{N}\sum \max(0, 1 - t_i z_i)$, minimisée par descente de (sous-)gradient.
-> 5. $\lambda$ (ou $C$) arbitre entre marge large et erreurs d'entraînement.
+> 4. Marge souple : $E(w, b) = \frac{1}{2}\|w\|^2 + \frac{C}{N}\sum \max(0, 1 - t_i z_i)$, minimisée par descente de (sous-)gradient.
+> 5. $C$ arbitre entre marge large et erreurs d'entraînement.
 > 6. Perceptron : une droite quelconque, oscille sur données bruitées. SVM : la droite de marge maximale, stable.

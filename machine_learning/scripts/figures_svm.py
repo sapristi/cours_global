@@ -1,4 +1,4 @@
-"""Figures du chapitre 5 (SVM) -> assets/05-svm-*.png.
+"""Figures du chapitre 7 (SVM) -> assets/05-svm-*.png.
 
 Usage : uv run python machine_learning/scripts/figures_svm.py
 Notation : cibles t in {-1,+1}, score z = w.x + b.
