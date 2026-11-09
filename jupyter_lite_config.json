@@ -6,6 +6,7 @@
   },
   "PyodideLockAddon": {
     "enabled": true,
-    "prefetch": ["numpy", "matplotlib", "pandas", "plotly"]
+    "specs": ["plotly"],
+    "prefetch_extra": ["numpy", "matplotlib", "pandas", "plotly"]
   }
 }

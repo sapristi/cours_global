@@ -12,12 +12,12 @@ Revérifier avec `uv run scripts/check_notebooks.py` et des aperçus `prepare_no
 ## T-005 — Vérifier le déploiement JupyterLite sur GitHub Pages
 created: 2026-11-09 15:36
 
-S'assurer que les notebooks (des deux cours) sont bien déployés sur GitHub Pages via JupyterLite. Workflow : `.github/workflows/deploy.yml` (check_snippets → check_notebooks → `collect_lite_content.py` → `jupyter lite build` → upload `dist/` → deploy, uniquement sur `main`). URL cible indiquée dans le workflow : `https://<owner>.github.io/cours_global/`.
+S'assurer que les notebooks (des deux cours) sont bien déployés sur GitHub Pages via JupyterLite (`.github/workflows/deploy.yml`, URL `https://sapristi.github.io/cours_global/`).
 
-À vérifier :
-- le remote GitHub, que Pages est activé avec la source « GitHub Actions » (`gh api repos/<owner>/<repo>/pages`) ;
-- le dernier run du workflow (`gh run list --workflow deploy.yml`), et qu'il passe ;
-- sur le site déployé, que les notebooks sont présents dans `machine_learning/` et `scripting_python/`, sans solutions ni cellules `<!-- TOCLEAR -->`, avec le bouton « Clear notebook » et leurs fichiers de données (CSV) ;
-- qu'un notebook s'exécute dans le navigateur (dépendances pyodide disponibles : pandas, numpy, matplotlib…).
+État au 2026-11-09 (vérifié par un agent) :
+- **Pages non activé** (`gh api repos/sapristi/cours_global/pages` → 404, `has_pages: false`) : à activer avec la source « GitHub Actions » (`gh api -X POST repos/sapristi/cours_global/pages -f build_type=workflow` ou Settings > Pages).
+- **CI** : les 4 runs ont échoué à « Check notebooks execute » (TD05 sans corrigé). Corrigé par le commit local f63727a, non poussé. En local depuis HEAD, toute la chaîne passe (check_snippets, check_notebooks 12/12, collect, `jupyter lite build`), et `dist/` est correct : notebooks des deux cours, CSV, solutions et réponses retirées, cellule Clear notebook présente.
+- **plotly absent de Pyodide** (0.8.6 / Pyodide 314.0.6) : `import plotly` échouera dans ML 01 et 03. `jupyter_lite_config.json` → `PyodideLockAddon` : remplacer `"prefetch": [...]` par `"specs": ["plotly"]` + `"prefetch_extra": ["numpy", "matplotlib", "pandas", "plotly"]`. Testé en build local : le build passe et la roue plotly 7.1.0 est incluse. `prefetch` remplace aussi la liste par défaut (ipykernel, comm…), d'où `prefetch_extra`.
+- Mineur : les consignes de `05_voyage_impossible` et `bases_pandas` parlent de `#BEGIN`/`#END` (à traiter dans T-004).
 
-Attention : `check_notebooks.py` échoue sur `scripting_python/td/05_voyage_impossible.ipynb` tant que son corrigé (T-003, voir T-004) n'est pas commité ; la CI échouera donc avant le build.
+Reste : appliquer le fix plotly, pousser, activer Pages, puis vérifier le site en ligne (contenus via `<site>/api/contents/all.json`, exécution d'un notebook ML avec plotly dans le navigateur).
