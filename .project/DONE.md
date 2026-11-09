@@ -1,5 +1,15 @@
 # DONE
 
+## T-005 — Vérifier le déploiement JupyterLite sur GitHub Pages
+created: 2026-11-09 15:36
+done: 2026-11-09 20:26
+
+Déployé le 2026-11-09 sur https://sapristi.github.io/cours_global/ : Pages activé (source GitHub Actions), fix plotly commité (735a844), run CI 42639806188 vert. Le premier déploiement est resté bloqué en « syncing_files » jusqu'au timeout, juste après l'activation de Pages ; il est passé en relançant le job. Contrôlé par curl : les deux dossiers de cours, tous les notebooks, les CSV, plotly dans `pyodide-lock.json`, et TD04 en ligne sans solutions ni réponses, avec la cellule Clear notebook.
+
+Reste (manuel, dans un navigateur) : ouvrir un notebook ML qui importe plotly (01 ou 03) et un notebook scripting_python qui lit un CSV (05), puis les exécuter en entier dans JupyterLite. Si tout passe, fermer la tâche.
+
+Outcome: vérification manuelle faite par l'auteur dans un navigateur : notebooks ML avec plotly et scripting_python TD05 (CSV) exécutés en entier dans JupyterLite, tout passe.
+
 ## T-003 — scripting_python TD05 : corrigé de `fusionner` manquant
 created: 2026-11-09 15:20
 done: 2026-11-09 15:28
