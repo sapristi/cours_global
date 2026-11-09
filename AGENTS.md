@@ -14,10 +14,62 @@ Obsidian. Contenu pédagogique en français.
   - Les modules de cours (`N. <Titre>.md`) sont directement à la racine du dossier (vault Obsidian) ; `assets/` = assets des modules.
   - `td/` = notebooks des TD (les **corrigés**, solutions incluses), à plat `NN_<theme>.ipynb` + fichiers de données.
   - `Entrypoint.md` = objectifs + plan.
+- `devoirs/` = **sous-module Git privé** (sujets, corrigés, notes des devoirs) ; voir la section « Devoirs » plus bas.
 - `scripts/` = scripts mutualisés (voir plus bas).
 - `content/` = staging généré par `collect_lite_content.py` (gitignoré, ne pas éditer à la main).
 - `dist/` = sortie du build JupyterLite (gitignorée).
 - `.github/workflows/deploy.yml` = CI (vérifications + build + déploiement Pages).
+
+## Devoirs (sous-module privé)
+
+Le dépôt `cours_global` est **public**. Les devoirs (sujets, corrigés, grilles
+de notes) vivent dans un dépôt **privé** séparé,
+`git@github.com:sapristi/cours_devoirs.git`, monté comme sous-module dans
+`devoirs/` :
+
+```
+devoirs/                 ← sous-module (dépôt privé cours_devoirs)
+├── machine_learning/
+└── scripting_python/
+    ├── DST_30min_sujet.{md,typ,pdf}
+    ├── DST_30min_corrige.{typ,pdf}
+    └── DST_30min_notes.ods
+```
+
+Un seul dépôt privé pour tous les cours, un sous-dossier par cours (même nom
+que le dossier du cours). Un sous-module ne peut pas pointer vers un
+sous-répertoire, d'où ce dossier unique à la racine.
+
+Règles :
+
+- **Ne jamais** placer de devoir, corrigé ou fichier de notes ailleurs que
+  dans `devoirs/` : tout le reste du dépôt est public. Les fichiers de notes
+  contiennent des données personnelles d'étudiants (RGPD).
+- Ne pas recréer de dossier `devoir/` dans les cours (l'ancien
+  `scripting_python/devoir/` a été migré ; ses sujets restent dans
+  l'historique public, ce qui est acceptable pour des sujets déjà distribués).
+- Les devoirs ne sont pas dans les vaults Obsidian et ne sont pas parcourus
+  par les scripts (`check_*`, `collect_lite_content.py` ne scannent que
+  `machine_learning/` et `scripting_python/`).
+- Le CI (`actions/checkout` sans `submodules`) ne clone pas `devoirs/` ; ne
+  pas l'y ajouter.
+
+Workflow :
+
+```bash
+# récupérer les devoirs (clone neuf ou autre machine ; accès au dépôt privé requis)
+git submodule update --init
+
+# modifier un devoir : committer et pousser d'abord DANS le sous-module…
+cd devoirs
+git add scripting_python/… && git commit -m "…" && git push
+cd ..
+# …puis committer le nouveau pointeur dans cours_global
+git add devoirs && git commit -m "devoirs : <résumé>"
+```
+
+Pousser `cours_global` avant `devoirs/` laisse un pointeur vers un commit
+introuvable pour les autres clones.
 
 ## Conventions Obsidian
 

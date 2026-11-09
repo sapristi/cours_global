@@ -1,0 +1,3 @@
+[submodule "devoirs"]
+	path = devoirs
+	url = git@github.com:sapristi/cours_devoirs.git
