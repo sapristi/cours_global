@@ -217,16 +217,34 @@ check_fit_batch()
 - Pour une variante **stochastique** (`fit_online`), fige l'ordre (`seed`) ou teste plutôt l'étape déterministe (`_step`/`fit_batch`).
 - Pour un réseau à activation **non linéaire** (sigmoid/tanh), le résultat n'est pas un littéral exact : on ne peut pas écrire `==` une constante. On teste alors `forward`/`backward` sur des valeurs de référence pré-calculées (comparaison par `np.allclose`).
 
-## Cellule de réponse `# TOCLEAR`
+## Cellule de réponse (`<!-- TOCLEAR -->`)
 
 Pour fournir la réponse du corrigé à une question de lecture (énoncée comme un
-exercice, voir « Écrire un exercice »), placer juste après l'énoncé une cellule **markdown** dont la première ligne non vide est
-exactement `# TOCLEAR`, suivie du texte de la réponse. À la préparation
-(`strip_solutions`, donc `prepare_notebooks.py` et `collect_lite_content.py`),
-ces cellules sont supprimées. Les cellules code ne sont pas concernées, et un
-`# TOCLEAR` qui n'est pas en première ligne non vide ne déclenche rien. Si
-l'étudiant doit écrire sa réponse, laisser avant la cellule `# TOCLEAR` une
-cellule markdown « *Votre réponse :* » (visible des deux côtés).
+exercice, voir « Écrire un exercice »), placer juste après l'énoncé une cellule
+**markdown** dont la première ligne non vide est exactement `<!-- TOCLEAR -->`
+(commentaire HTML, invisible au rendu), suivie de la réponse dans un encart vert
+« 💡 Réponse » :
+
+```markdown
+<!-- TOCLEAR -->
+<fieldset style="border: 3px solid #2e7d32; border-radius: 8px; padding: 0 14px; margin: 12px 0">
+<legend style="color: #2e7d32; font-weight: bold; font-size: 1.5em; padding: 0 6px">💡 Réponse</legend>
+
+Le cas A est linéairement séparable : …
+
+</fieldset>
+```
+
+- Recopier les balises **telles quelles** ; mêmes règles que l'encart d'exercice
+  (styles inline, lignes vides après `</legend>` et avant `</fieldset>`).
+- C'est le commentaire `<!-- TOCLEAR -->` qui déclenche la suppression, pas
+  l'encart : sans lui, la cellule reste dans la version diffusée.
+- À la préparation (`strip_solutions`, donc `prepare_notebooks.py` et
+  `collect_lite_content.py`), ces cellules sont supprimées. Les cellules code ne
+  sont pas concernées, et un `<!-- TOCLEAR -->` qui n'est pas en première ligne
+  non vide ne déclenche rien.
+- Si l'étudiant doit écrire sa réponse, laisser avant la cellule de réponse une
+  cellule markdown « *Votre réponse :* » (visible des deux côtés).
 
 ## Règles BEGIN/END
 

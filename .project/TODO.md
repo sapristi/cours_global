@@ -1,26 +1,23 @@
 # TODO
 
-## T-001 — machine_learning TD04 : traiter les TODO de l'auteur
-created: 2026-11-09 15:07
+## T-004 — scripting_python : mettre les notebooks TD aux normes du skill
+created: 2026-11-09 15:36
 
-Le notebook `machine_learning/td/04_evaluation_elan.ipynb` contient des notes `TODO` laissées par l'auteur, à appliquer puis supprimer :
+Les notebooks `scripting_python/td/*.ipynb` ne suivent pas le skill `notebook_exercises` (`.claude/skills/notebook_exercises/SKILL.md`). Par exemple, `05_voyage_impossible.ipynb` n'a pas d'encart `fieldset` « ✏️ Exercice N », ses sections ne suivent pas la structure `##`/`###` numérotée, sa consigne d'intro mentionne `#BEGIN`/`#END`, et ses fonctions n'ont pas de `# raise NotImplementedError` après `# BEGIN`. Les notebooks ML (commit « machine_learning: notebooks TD conformes au skill notebook_exercises ») servent de référence.
 
-- cellule de la classe `MLP` (préambule) : commentaire `# TODO: lr en dernier paramètre` au-dessus de `fit` — passer `lr` après `X_test`/`t_test` dans la signature de `fit` (et adapter tous les appels qui passent `lr` en positionnel, ex. bonus C `fit(..., lr=k * LR, ...)`, ainsi que `MLPMomentum`).
-- docstring de `sweep_threshold` (exercice 5) : `TODO: considérer retourner des listes plutot que np.array` — trancher, puis adapter `check_sweep`, le tracé et `check_sweep_moons` (bonus E).
-- énoncé de l'exercice bonus A : `TODO: reprendre l'exo, on ne comprends pas bien pourquoi X_new / t_new ne sont pas utilisés ici alors qu'ils sont introduits juste au dessus` — clarifier l'énoncé (X_new/t_new ne servent qu'à la cellule suivante, test final consulté une fois) ; cette note est actuellement visible des étudiants.
+Le corrigé de TD05 (solutions des 5 fonctions, T-003) est fait mais n'est **pas encore commité** : à commiter avec cette mise à jour, ou avant. Sans lui, `check_notebooks.py` échoue sur TD05, et donc la CI aussi.
 
-Respecter le skill `notebook_exercises` (`.claude/skills/notebook_exercises/SKILL.md`) et revérifier avec `uv run scripts/check_notebooks.py machine_learning/td/04_evaluation_elan.ipynb`.
+Revérifier avec `uv run scripts/check_notebooks.py` et des aperçus `prepare_notebooks.py` dans un dossier temporaire.
 
-## T-002 — Remplacer le marqueur `# TOCLEAR` par un encart « réponse »
-created: 2026-11-09 15:07
+## T-005 — Vérifier le déploiement JupyterLite sur GitHub Pages
+created: 2026-11-09 15:36
 
-Problème : les cellules de réponse du corrigé commencent par `# TOCLEAR`, qui s'affiche comme un titre markdown de niveau 1 quand on lit le corrigé (confusion avec la structure du notebook).
+S'assurer que les notebooks (des deux cours) sont bien déployés sur GitHub Pages via JupyterLite. Workflow : `.github/workflows/deploy.yml` (check_snippets → check_notebooks → `collect_lite_content.py` → `jupyter lite build` → upload `dist/` → deploy, uniquement sur `main`). URL cible indiquée dans le workflow : `https://<owner>.github.io/cours_global/`.
 
-À faire : afficher la réponse dans un encart `fieldset` similaire à celui des exercices (voir skill `notebook_exercises`, styles inline uniquement, lignes vides après `</legend>` et avant `</fieldset>`), avec une couleur différente (ex. vert) et une légende du type « 💡 Réponse ». Choisir le marqueur de suppression le plus simple, par exemple un commentaire HTML `<!-- TOCLEAR -->` en première ligne (invisible au rendu) ou la détection de la légende de l'encart.
+À vérifier :
+- le remote GitHub, que Pages est activé avec la source « GitHub Actions » (`gh api repos/<owner>/<repo>/pages`) ;
+- le dernier run du workflow (`gh run list --workflow deploy.yml`), et qu'il passe ;
+- sur le site déployé, que les notebooks sont présents dans `machine_learning/` et `scripting_python/`, sans solutions ni cellules `<!-- TOCLEAR -->`, avec le bouton « Clear notebook » et leurs fichiers de données (CSV) ;
+- qu'un notebook s'exécute dans le navigateur (dépendances pyodide disponibles : pandas, numpy, matplotlib…).
 
-Fichiers concernés :
-- `scripts/nb_common.py` (`is_toclear_cell`, `drop_toclear_cells`, docstrings) — utilisé par `scripts/prepare_notebooks.py` et `scripts/collect_lite_content.py` ;
-- documentation : `AGENTS.md` (racine), `.claude/skills/notebook_exercises/SKILL.md` (section « Cellule de réponse `# TOCLEAR` ») ;
-- migrer toutes les cellules `# TOCLEAR` existantes de `machine_learning/td/*.ipynb` (et `scripting_python/td/` s'il y en a).
-
-Vérifier ensuite avec `prepare_notebooks.py` qu'aucune réponse ne subsiste dans l'aperçu, et avec `check_notebooks.py`.
+Attention : `check_notebooks.py` échoue sur `scripting_python/td/05_voyage_impossible.ipynb` tant que son corrigé (T-003, voir T-004) n'est pas commité ; la CI échouera donc avant le build.

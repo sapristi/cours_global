@@ -41,8 +41,9 @@ Les notebooks du repo sont les **corrigés** (solutions incluses). Au build
 JupyterLite, `scripts/collect_lite_content.py` les copie dans `content/` en
 retirant les solutions (blocs `# BEGIN`/`# END`, les deux formes `# BEGIN` et
 `#BEGIN` sont acceptées) et en injectant un bouton « Clear notebook ». Les cellules markdown dont la
-première ligne non vide est exactement `# TOCLEAR` (réponses du corrigé) sont
-supprimées.
+première ligne non vide est exactement `<!-- TOCLEAR -->` (réponses du corrigé,
+affichées dans un encart vert « 💡 Réponse », voir le skill `notebook_exercises`)
+sont supprimées.
 
 ### Aperçu local (fichier → fichier)
 

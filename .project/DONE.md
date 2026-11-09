@@ -1,0 +1,40 @@
+# DONE
+
+## T-003 — scripting_python TD05 : corrigé de `fusionner` manquant
+created: 2026-11-09 15:20
+done: 2026-11-09 15:28
+
+`uv run scripts/check_notebooks.py` échoue sur `scripting_python/td/05_voyage_impossible.ipynb` : dans le corrigé, la cellule `fusionner` ne contient que `# TODO` + `pass` (pas de solution entre `# BEGIN`/`# END`). La fonction renvoie None et la cellule suivante lève `AttributeError: 'NoneType' object has no attribute 'columns'`. Échec antérieur à T-002 (notebook identique à HEAD au 2026-11-09). Écrire la solution entre marqueurs `# BEGIN`/`# END` en suivant le skill `notebook_exercises`, puis revérifier avec `check_notebooks.py`.
+
+Outcome: le notebook avait été commité sans aucune solution : les 5 fonctions (`fusionner`, `detecter_voyages_impossibles`, `retirer_vpn`, `ip_partagees`, `utilisateurs_compromis`) ont reçu leur corrigé entre `# BEGIN`/`# END` (indices de l'ex. 2 passés en `##`). Version étudiant identique à l'ancien notebook ; `check_notebooks.py` : 12/12 OK. Non commité.
+
+## T-002 — Remplacer le marqueur `# TOCLEAR` par un encart « réponse »
+created: 2026-11-09 15:07
+done: 2026-11-09 15:20
+
+Problème : les cellules de réponse du corrigé commencent par `# TOCLEAR`, qui s'affiche comme un titre markdown de niveau 1 quand on lit le corrigé (confusion avec la structure du notebook).
+
+À faire : afficher la réponse dans un encart `fieldset` similaire à celui des exercices (voir skill `notebook_exercises`, styles inline uniquement, lignes vides après `</legend>` et avant `</fieldset>`), avec une couleur différente (ex. vert) et une légende du type « 💡 Réponse ». Choisir le marqueur de suppression le plus simple, par exemple un commentaire HTML `<!-- TOCLEAR -->` en première ligne (invisible au rendu) ou la détection de la légende de l'encart.
+
+Fichiers concernés :
+- `scripts/nb_common.py` (`is_toclear_cell`, `drop_toclear_cells`, docstrings) — utilisé par `scripts/prepare_notebooks.py` et `scripts/collect_lite_content.py` ;
+- documentation : `AGENTS.md` (racine), `.claude/skills/notebook_exercises/SKILL.md` (section « Cellule de réponse `# TOCLEAR` ») ;
+- migrer toutes les cellules `# TOCLEAR` existantes de `machine_learning/td/*.ipynb` (et `scripting_python/td/` s'il y en a).
+
+Vérifier ensuite avec `prepare_notebooks.py` qu'aucune réponse ne subsiste dans l'aperçu, et avec `check_notebooks.py`.
+
+Outcome: marqueur `<!-- TOCLEAR -->` (1re ligne non vide, invisible au rendu ; ancienne forme `# TOCLEAR` abandonnée) + encart `fieldset` vert #2e7d32 « 💡 Réponse ». `scripts/nb_common.py`, docstrings de prepare/collect, `AGENTS.md` et skill notebook_exercises mis à jour ; 31 cellules migrées (ML TD01–06, aucune dans scripting_python). Aperçus vérifiés sans réponse. Non commité.
+
+## T-001 — machine_learning TD04 : traiter les TODO de l'auteur
+created: 2026-11-09 15:07
+done: 2026-11-09 15:12
+
+Le notebook `machine_learning/td/04_evaluation_elan.ipynb` contient des notes `TODO` laissées par l'auteur, à appliquer puis supprimer :
+
+- cellule de la classe `MLP` (préambule) : commentaire `# TODO: lr en dernier paramètre` au-dessus de `fit` — passer `lr` après `X_test`/`t_test` dans la signature de `fit` (et adapter tous les appels qui passent `lr` en positionnel, ex. bonus C `fit(..., lr=k * LR, ...)`, ainsi que `MLPMomentum`).
+- docstring de `sweep_threshold` (exercice 5) : `TODO: considérer retourner des listes plutot que np.array` — trancher, puis adapter `check_sweep`, le tracé et `check_sweep_moons` (bonus E).
+- énoncé de l'exercice bonus A : `TODO: reprendre l'exo, on ne comprends pas bien pourquoi X_new / t_new ne sont pas utilisés ici alors qu'ils sont introduits juste au dessus` — clarifier l'énoncé (X_new/t_new ne servent qu'à la cellule suivante, test final consulté une fois) ; cette note est actuellement visible des étudiants.
+
+Respecter le skill `notebook_exercises` (`.claude/skills/notebook_exercises/SKILL.md`) et revérifier avec `uv run scripts/check_notebooks.py machine_learning/td/04_evaluation_elan.ipynb`.
+
+Outcome: `fit(self, X, t, epochs, X_test=None, t_test=None, lr=LR)` (appels bonus C réordonnés, MLPMomentum inchangé) ; `sweep_threshold` renvoie des listes Python (check_sweep / check_sweep_moons adaptés) ; énoncé bonus A réécrit (validation = courbes de §3, X_new/t_new consultés une seule fois après). check_notebooks OK. Non commité.
