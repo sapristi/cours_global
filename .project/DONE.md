@@ -1,5 +1,17 @@
 # DONE
 
+## T-004 — scripting_python : mettre les notebooks TD aux normes du skill
+created: 2026-11-09 15:36
+done: 2026-11-09 20:53
+
+Les notebooks `scripting_python/td/*.ipynb` ne suivent pas le skill `notebook_exercises` (`.claude/skills/notebook_exercises/SKILL.md`). Par exemple, `05_voyage_impossible.ipynb` n'a pas d'encart `fieldset` « ✏️ Exercice N », ses sections ne suivent pas la structure `##`/`###` numérotée, sa consigne d'intro mentionne `#BEGIN`/`#END`, et ses fonctions n'ont pas de `# raise NotImplementedError` après `# BEGIN`. Les notebooks ML (commit « machine_learning: notebooks TD conformes au skill notebook_exercises ») servent de référence.
+
+Le corrigé de TD05 est commité (f63727a).
+
+Revérifier avec `uv run scripts/check_notebooks.py` et des aperçus `prepare_notebooks.py` dans un dossier temporaire.
+
+Outcome: les 6 notebooks de `scripting_python/td/` sont conformes (encarts « ✏️ Exercice N », structure `##`/`###` numérotée, `# raise NotImplementedError`, vérification autonome après chaque exercice, sorties vidées, ids de cellules). TD02 et TD03 n'avaient ni corrigé ni vérifications : ils ont été écrits (TD03 : fonctions qui renvoient la figure en `str` ; motif « rayures » redéfini par `(c+ligne)%4==0` car le dessin d'origine était irrégulier, à valider). `bases_pandas.ipynb` non renommé (URL déployée). Commits b59df08..5203f66, plus les corrections de revue finale incluses dans c56749b. `check_notebooks.py` : 12/12 OK.
+
 ## T-005 — Vérifier le déploiement JupyterLite sur GitHub Pages
 created: 2026-11-09 15:36
 done: 2026-11-09 20:26
