@@ -10,7 +10,7 @@ Le corrigé de TD05 est commité (f63727a).
 
 Revérifier avec `uv run scripts/check_notebooks.py` et des aperçus `prepare_notebooks.py` dans un dossier temporaire.
 
-Outcome: les 6 notebooks de `scripting_python/td/` sont conformes (encarts « ✏️ Exercice N », structure `##`/`###` numérotée, `# raise NotImplementedError`, vérification autonome après chaque exercice, sorties vidées, ids de cellules). TD02 et TD03 n'avaient ni corrigé ni vérifications : ils ont été écrits (TD03 : fonctions qui renvoient la figure en `str` ; motif « rayures » redéfini par `(c+ligne)%4==0` car le dessin d'origine était irrégulier, à valider). `bases_pandas.ipynb` non renommé (URL déployée). Commits b59df08..5203f66, plus les corrections de revue finale incluses dans c56749b. `check_notebooks.py` : 12/12 OK.
+Outcome: les 6 notebooks de `scripting_python/td/` sont conformes (encarts « ✏️ Exercice N », structure `##`/`###` numérotée, `# raise NotImplementedError`, vérification autonome après chaque exercice, sorties vidées, ids de cellules). TD02 et TD03 n'avaient ni corrigé ni vérifications : ils ont été écrits (TD03 : fonctions qui renvoient la figure en `str` ; motif « rayures » redéfini par `(c+ligne)%4==0` car le dessin d'origine était irrégulier, à valider). `bases_pandas.ipynb` non renommé (URL déployée). Commits b59df08..5203f66, plus les corrections de revue finale (26f60e7). `check_notebooks.py` : 12/12 OK.
 
 ## T-005 — Vérifier le déploiement JupyterLite sur GitHub Pages
 created: 2026-11-09 15:36
