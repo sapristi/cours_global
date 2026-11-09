@@ -13,3 +13,13 @@ Cours pour des étudiants de 3e année. On suppose des bases en programmation, e
 
 
  
+# Évaluation
+
+## Compétences évaluées
+
+1. **Connaissances en cybersécurité :** maîtriser le vocabulaire et les cadres (CIA, AAA, kill chain, IOC). Associer une menace à une phase d'attaque et à une défense adaptée, et connaître le cadre légal.
+2. **Lecture et compréhension de code Python :** prédire le résultat d'un extrait de code, repérer et expliquer une erreur, décrire en français ce que fait un traitement (dont une chaîne d'opérations pandas).
+3. **Compréhension des échanges réseau :** analyser une requête et une réponse HTTP, connaître le rôle du timeout et les risques liés aux bibliothèques tierces.
+4. **Raisonnement algorithmique :** dérouler un algorithme à la main (parcours BFS/DFS, attaque temporelle). Estimer et comparer la complexité de plusieurs approches (force brute ou attaque par canal latéral).
+5. **Analyse et détection de menaces :** calculer et interpréter des indicateurs sur des journaux (coefficient de variation, vitesse de déplacement, comptage de destinations). Poser un diagnostic, puis identifier et traiter les faux positifs.
+6. **Esprit critique :** justifier un choix, expliquer les limites d'une méthode de détection et la contre-mesure qu'un attaquant pourrait lui opposer.
