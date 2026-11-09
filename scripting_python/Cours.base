@@ -1,6 +1,6 @@
 filters:
   and:
-    - file.folder == "/"
+    - file.folder == "scripting_python"
     - file.ext == "md"
     - file.hasProperty("Contexte")
 views:

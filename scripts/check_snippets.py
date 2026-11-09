@@ -86,7 +86,7 @@ def collecter_md(cibles: list[str]) -> list[Path]:
         else:
             print(f"cible introuvable : {cible}", file=sys.stderr)
     # Exclut le workspace Obsidian et les dossiers de build/environnement.
-    exclus = (".obsidian", ".git", "dist", "content", "docs", "td", "td_pandas", "devoir", "node_modules", ".venv", ".ipynb_checkpoints", "__pycache__")
+    exclus = (".obsidian", ".git", "dist", "content", "docs", "td", "devoirs", "node_modules", ".venv", ".ipynb_checkpoints", "__pycache__")
     return [f for f in fichiers if not any(part in exclus for part in f.parts)]
 
 
