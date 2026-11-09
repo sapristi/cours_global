@@ -49,3 +49,23 @@ Il faudra placer une évaluation lors du cours du 29/10
 
 ## Bibliographie
 Voir [[Bibliographie]]
+
+# Conventions
+
+## Notations
+
+On distingue soigneusement la **cible** (ce qu'il faut prédire) de la **sortie** (ce que le modèle prédit). Ces notations valent pour le cours comme pour les notebooks de TD.
+
+| Concept | Minuscule (scalaire/vecteur) | Majuscule (matrice) |
+|---|---|---|
+| Entrée | `x` | `X` (un échantillon par ligne, forme (N, d)) |
+| **Cible (target)** | `t` | `T` (cibles one-hot, notation mathématique) |
+| **Sortie / prédiction** | `y` | `Y` (activations d'une couche, sortie du réseau) |
+| Pré-activation | `z` | `Z` |
+| Poids / biais | `w`, `b` | `W`, `b` |
+| Activation | `a` | `A` |
+| Coût / erreur rétropropagée | `E`, `δ` | — |
+| Taux d'apprentissage | `r` (perceptron), `η` (multi-couche) | `lr` en code |
+
+> [!danger] Règle clé
+> La **cible** se note toujours `t` (jamais `y`) ; `y` est réservé à la **sortie** du modèle.

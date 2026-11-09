@@ -23,3 +23,20 @@ Cours pour des étudiants de 3e année. On suppose des bases en programmation, e
 4. **Raisonnement algorithmique :** dérouler un algorithme à la main (parcours BFS/DFS, attaque temporelle). Estimer et comparer la complexité de plusieurs approches (force brute ou attaque par canal latéral).
 5. **Analyse et détection de menaces :** calculer et interpréter des indicateurs sur des journaux (coefficient de variation, vitesse de déplacement, comptage de destinations). Poser un diagnostic, puis identifier et traiter les faux positifs.
 6. **Esprit critique :** justifier un choix, expliquer les limites d'une méthode de détection et la contre-mesure qu'un attaquant pourrait lui opposer.
+
+# Conventions
+
+## Modules de cours
+
+Chaque module (`N. <Titre>.md`) a un frontmatter avec `durée (h)` (nombre) et `Contexte` (texte, source du plan affiché ci-dessus via `Cours.base`).
+
+Vocabulaire de référence (module 1) : CIA, AAA, vulnérabilité / exploit / payload / IOC / TTP, Kill Chain, Red / Blue team.
+
+## Bibliothèques de référence
+
+`socket`, `requests`, `hashlib`, `re`, `paramiko`, `pandas` (module 7).
+
+## Cadre légal des exemples offensifs
+
+> [!danger] Labo isolé uniquement
+> Tout exemple offensif (scan avec `socket`, brute-force avec `requests` / `paramiko`, injection…) doit rappeler : **labo isolé uniquement, autorisation écrite préalable, art. 323-1 du Code pénal**. Ne jamais proposer ni utiliser de cible réelle.

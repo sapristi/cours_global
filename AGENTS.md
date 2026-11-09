@@ -1,19 +1,27 @@
 # AGENTS.md — cours_global
 
 Dépôt fusionné regroupant plusieurs cours (actuellement machine learning et
-scripting python), chacun dans son propre sous-dossier et son propre vault
-Obsidian. Contenu pédagogique en français.
+scripting python), chacun dans son propre sous-dossier. Un seul vault
+Obsidian, à la racine du dépôt (`.obsidian/`). Contenu pédagogique en français.
+
+## Avant de travailler sur un cours ou un TD
+
+**Lire `<cours>/Entrypoint.md`** (`machine_learning/Entrypoint.md` ou
+`scripting_python/Entrypoint.md`) : contexte (niveau, prérequis), objectifs,
+plan, compétences évaluées et section **Conventions** du cours (notations du
+cours de ML, cadre légal des exemples offensifs en scripting python…). Ces
+conventions s'appliquent aussi aux notebooks de TD.
 
 ## Structure du dépôt
 
 - `machine_learning/` : cours de machine learning.
-  - Les cours en markdown (`N - <Titre>.md`) sont directement à la racine du dossier (vault Obsidian) ; figures dans `assets/`, scripts de génération de figures dans `scripts/`.
-  - `td/` = notebooks des TD (les **corrigés**, solutions incluses), à plat `NN_<theme>.ipynb`.
-  - `Entrypoint.md` = objectifs + plan.
+  - Les cours en markdown (`N - <Titre>.md`) sont directement à la racine du dossier ; figures dans `assets/`, scripts de génération de figures dans `scripts/`.
+  - `td/` = notebooks des TD (les **corrigés**, solutions incluses), à plat `NN_<theme>.ipynb` ; images extraites des notebooks dans `td/assets/` (gérées par `scripts/notebooks.py`, lancé par le hook pre-commit).
+  - `Entrypoint.md` = contexte, objectifs, plan, conventions.
 - `scripting_python/` : cours de scripting Python (cybersécurité).
-  - Les modules de cours (`N. <Titre>.md`) sont directement à la racine du dossier (vault Obsidian) ; `assets/` = assets des modules.
+  - Les modules de cours (`N. <Titre>.md`) sont directement à la racine du dossier ; `assets/` = assets des modules ; `Exercices/` = énoncés complémentaires.
   - `td/` = notebooks des TD (les **corrigés**, solutions incluses), à plat `NN_<theme>.ipynb` + fichiers de données.
-  - `Entrypoint.md` = objectifs + plan.
+  - `Entrypoint.md` = contexte, objectifs, plan (via `Cours.base`), compétences évaluées, conventions.
 - `devoirs/` = **sous-module Git privé** (sujets, corrigés, notes des devoirs) ; voir la section « Devoirs » plus bas.
 - `scripts/` = scripts mutualisés (voir plus bas).
 - `content/` = staging généré par `collect_lite_content.py` (gitignoré, ne pas éditer à la main).
@@ -71,13 +79,19 @@ git add devoirs && git commit -m "devoirs : <résumé>"
 Pousser `cours_global` avant `devoirs/` laisse un pointeur vers un commit
 introuvable pour les autres clones.
 
+Sujets et corrigés sont rédigés en Typst : éditer le `.typ`, jamais le `.pdf`,
+puis recompiler avec `typst compile "<fichier>.typ"` (le `.pdf` est versionné à
+côté).
+
 ## Conventions Obsidian
 
 **À appliquer uniquement quand un fichier markdown est édité, pas un notebook .ipynb**
 
 - Liens/embeds wiki `[[...]]` / `![[...]]`, callouts `[!abstract]`, `[!info]`, `[!danger]`, `[!example]`, `[!note]`.
 - Frontmatter YAML strict (`---` blocs). `Contexte` multiligne avec `|-`.
-- Ne pas toucher aux dossiers `.obsidian/` des vaults (workspace, `graph.json`, plugins).
+- Images : stockées dans `<cours>/assets/`, embarquées avec `![[<image>.png|largeur]]`.
+- Ne pas toucher au dossier `.obsidian/` (workspace, `graph.json`, plugins).
+- Les fichiers `*.base` (ex. `scripting_python/Cours.base`, tableau du plan) sont de la configuration Bases, pas du contenu : ne pas les éditer comme du texte de cours.
 
 ## Environnement Python
 
@@ -111,7 +125,12 @@ Sert à prévisualiser ce que verra l'étudiant. Écrire l'aperçu hors du repo
 - `uv run scripts/check_notebooks.py` : exécute tous les corrigés (échec si une cellule lève).
 - `uv run scripts/check_snippets.py` : syntaxe des snippets Python des `.md`.
 
-## Par cours
+### Images des notebooks (machine_learning)
 
-Voir `machine_learning/AGENTS.md` et `scripting_python/AGENTS.md` pour les
-conventions spécifiques à chaque cours.
+Le hook pre-commit le fait automatiquement ; à la main :
+
+```bash
+uv run python scripts/notebooks.py --td machine_learning/td extract   # attachments -> td/assets/
+uv run python scripts/notebooks.py --td machine_learning/td clear     # vider les sorties
+uv run python scripts/notebooks.py --td machine_learning/td prune     # supprimer les images orphelines
+```
