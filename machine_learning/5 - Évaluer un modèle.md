@@ -1,6 +1,6 @@
 ---
 titre: 5 - Évaluer un modèle
-cours: "[[Entrypoint]]"
+cours: "[[machine_learning/Readme]]"
 partie: 5
 statut: draft
 Contexte: |-

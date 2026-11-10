@@ -1,13 +1,13 @@
 # AGENTS.md — cours_global
 
-Dépôt fusionné regroupant plusieurs cours (actuellement machine learning et
-scripting python), chacun dans son propre sous-dossier. Un seul vault
-Obsidian, à la racine du dépôt (`.obsidian/`). Contenu pédagogique en français.
+@README.md
+
+# Instructions
 
 ## Avant de travailler sur un cours ou un TD
 
-**Lire `<cours>/Entrypoint.md`** (`machine_learning/Entrypoint.md` ou
-`scripting_python/Entrypoint.md`) : contexte (niveau, prérequis), objectifs,
+**Lire `<cours>/Readme.md`** (`machine_learning/Readme.md` ou
+`scripting_python/Readme.md`) : contexte (niveau, prérequis), objectifs,
 plan, compétences évaluées et section **Conventions** du cours (notations du
 cours de ML, cadre légal des exemples offensifs en scripting python…). Ces
 conventions s'appliquent aussi aux notebooks de TD.
@@ -17,11 +17,11 @@ conventions s'appliquent aussi aux notebooks de TD.
 - `machine_learning/` : cours de machine learning.
   - Les cours en markdown (`N - <Titre>.md`) sont directement à la racine du dossier ; figures dans `assets/`, scripts de génération de figures dans `scripts/`.
   - `td/` = notebooks des TD (les **corrigés**, solutions incluses), à plat `NN_<theme>.ipynb` ; images extraites des notebooks dans `td/assets/` (gérées par `scripts/notebooks.py`, lancé par le hook pre-commit).
-  - `Entrypoint.md` = contexte, objectifs, plan, conventions.
+  - `Readme.md` = contexte, objectifs, plan, conventions.
 - `scripting_python/` : cours de scripting Python (cybersécurité).
   - Les modules de cours (`N. <Titre>.md`) sont directement à la racine du dossier ; `assets/` = assets des modules ; `Exercices/` = énoncés complémentaires.
   - `td/` = notebooks des TD (les **corrigés**, solutions incluses), à plat `NN_<theme>.ipynb` + fichiers de données.
-  - `Entrypoint.md` = contexte, objectifs, plan (via `Cours.base`), compétences évaluées, conventions.
+  - `Readme.md` = contexte, objectifs, plan (via `Cours.base`), compétences évaluées, conventions.
 - `devoirs/` = **sous-module Git privé** (sujets, corrigés, notes des devoirs) ; voir la section « Devoirs » plus bas.
 - `scripts/` = scripts mutualisés (voir plus bas).
 - `content/` = staging généré par `collect_lite_content.py` (gitignoré, ne pas éditer à la main).
@@ -45,20 +45,12 @@ devoirs/                 ← sous-module (dépôt privé cours_devoirs)
 ```
 
 Un seul dépôt privé pour tous les cours, un sous-dossier par cours (même nom
-que le dossier du cours). Un sous-module ne peut pas pointer vers un
-sous-répertoire, d'où ce dossier unique à la racine.
+que le dossier du cours).
 
 Règles :
 
 - **Ne jamais** placer de devoir, corrigé ou fichier de notes ailleurs que
-  dans `devoirs/` : tout le reste du dépôt est public. Les fichiers de notes
-  contiennent des données personnelles d'étudiants (RGPD).
-- Ne pas recréer de dossier `devoir/` dans les cours (l'ancien
-  `scripting_python/devoir/` a été migré ; ses sujets restent dans
-  l'historique public, ce qui est acceptable pour des sujets déjà distribués).
-- Les devoirs ne sont pas dans les vaults Obsidian et ne sont pas parcourus
-  par les scripts (`check_*`, `collect_lite_content.py` ne scannent que
-  `machine_learning/` et `scripting_python/`).
+  dans `devoirs/`.
 - Le CI (`actions/checkout` sans `submodules`) ne clone pas `devoirs/` ; ne
   pas l'y ajouter.
 
@@ -76,8 +68,6 @@ cd ..
 git add devoirs && git commit -m "devoirs : <résumé>"
 ```
 
-Pousser `cours_global` avant `devoirs/` laisse un pointeur vers un commit
-introuvable pour les autres clones.
 
 Sujets et corrigés sont rédigés en Typst : éditer le `.typ`, jamais le `.pdf`,
 puis recompiler avec `typst compile "<fichier>.typ"` (le `.pdf` est versionné à
@@ -90,8 +80,7 @@ côté).
 - Liens/embeds wiki `[[...]]` / `![[...]]`, callouts `[!abstract]`, `[!info]`, `[!danger]`, `[!example]`, `[!note]`.
 - Frontmatter YAML strict (`---` blocs). `Contexte` multiligne avec `|-`.
 - Images : stockées dans `<cours>/assets/`, embarquées avec `![[<image>.png|largeur]]`.
-- Ne pas toucher au dossier `.obsidian/` (workspace, `graph.json`, plugins).
-- Les fichiers `*.base` (ex. `scripting_python/Cours.base`, tableau du plan) sont de la configuration Bases, pas du contenu : ne pas les éditer comme du texte de cours.
+- Les fichiers `*.base` (ex. `scripting_python/Cours.base`, tableau du plan) sont de la configuration Bases.
 
 ## Environnement Python
 

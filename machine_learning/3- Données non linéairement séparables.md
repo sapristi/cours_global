@@ -1,6 +1,6 @@
 ---
 titre: 3 - Données non linéairement séparables
-cours: "[[Entrypoint]]"
+cours: "[[machine_learning/Readme]]"
 partie: 3
 statut: draft
 Contexte: |-

@@ -1,6 +1,6 @@
 ---
 titre: 7 - Support Vector Machines
-cours: "[[Entrypoint]]"
+cours: "[[machine_learning/Readme]]"
 partie: 7
 statut: draft
 Contexte: |-

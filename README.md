@@ -1,6 +1,6 @@
 # cours_global
 
-Supports de cours (en français) :
+Supports de cours:
 
 - **`machine_learning/`** : machine learning (4e année post-bac) — perceptron,
   réseaux multi-couches, RBF, SVM, évaluation de modèles ;
@@ -10,7 +10,15 @@ Supports de cours (en français) :
 
 Chaque cours contient les cours rédigés en markdown et les notebooks de TD.
 Le point d'entrée de chaque cours (contexte, objectifs, plan, conventions) est
-son `Entrypoint.md`.
+son `Readme.md`.
+
+## Lire les cours (Obsidian)
+
+Les cours sont écrits pour [Obsidian](https://obsidian.md):
+
+1. cloner le dépôt ;
+2. dans Obsidian, *Ouvrir un dossier comme coffre* → choisir la **racine du
+   dépôt**
 
 ## TD en ligne (JupyterLite)
 
@@ -29,38 +37,8 @@ sont rangés par cours (`machine_learning/`, `scripting_python/`).
   pour repartir de l'énoncé d'origine.
 
 Le site est reconstruit et redéployé automatiquement à chaque push sur `main`
-(GitHub Actions → GitHub Pages).
+(GitHub Actions → GitHub Pages). 
+TODO: mentionner que lorsqu'un notebook est sauvegardé, une nouvelle version 
+déployée n'apparaît pas.
 
-## Lire les cours (Obsidian)
 
-Les cours sont écrits pour [Obsidian](https://obsidian.md) (liens `[[...]]`,
-callouts, tableaux Bases) :
-
-1. cloner le dépôt ;
-2. dans Obsidian, *Ouvrir un dossier comme coffre* → choisir la **racine du
-   dépôt** (un seul coffre pour tous les cours, configuration incluse dans
-   `.obsidian/`) ;
-3. commencer par `machine_learning/Entrypoint.md` ou
-   `scripting_python/Entrypoint.md`.
-
-Les fichiers restent lisibles dans n'importe quel éditeur markdown (ou sur
-GitHub), au rendu des liens Obsidian près.
-
-## Travailler sur le dépôt
-
-Prérequis : [uv](https://docs.astral.sh/uv/).
-
-```bash
-uv sync                                  # dépendances
-uv run scripts/check_notebooks.py        # exécute tous les notebooks corrigés
-uv run scripts/check_snippets.py         # vérifie la syntaxe des snippets Python des .md
-uv run scripts/preview_lite.py           # aperçu local du site JupyterLite (http://127.0.0.1:8000/lab)
-```
-
-Les notebooks du dépôt sont les **corrigés** (solutions incluses) ; les
-solutions sont retirées par `scripts/collect_lite_content.py` au build. Les
-conventions détaillées (format des exercices, structure, devoirs) sont dans
-[`AGENTS.md`](AGENTS.md).
-
-Le dossier `devoirs/` est un sous-module vers un dépôt privé (sujets, corrigés
-et notes des évaluations) : il n'est pas accessible publiquement.

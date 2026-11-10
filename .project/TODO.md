@@ -28,3 +28,12 @@ Points à traiter :
   `scripting_python/td/` : regrouper ?
 - Vérifier ensuite `collect_lite_content.py`, `check_*.py` et le CI
   (`.github/workflows/deploy.yml`) avec la nouvelle arborescence.
+
+## T-007 — Relire manuellement AGENTS.md
+created: 2026-11-09 22:00
+
+Relecture humaine de `AGENTS.md` (racine, fichier unique depuis le commit
+76f479c qui a fusionné les AGENTS.md des cours et déplacé les conventions
+dans `<cours>/Readme.md`). Vérifier exactitude (structure du dépôt,
+chemins, commandes `uv run`, workflow du sous-module `devoirs/`), cohérence
+avec les Readme.md, et supprimer redites ou consignes obsolètes.

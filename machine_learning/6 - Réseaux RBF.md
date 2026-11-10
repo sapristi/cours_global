@@ -1,6 +1,6 @@
 ---
 titre: 6 - Réseaux RBF
-cours: "[[Entrypoint]]"
+cours: "[[machine_learning/Readme]]"
 partie: 6
 statut: draft
 Contexte: |-

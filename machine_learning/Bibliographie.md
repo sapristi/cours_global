@@ -1,6 +1,6 @@
 ---
 titre: "Bibliographie"
-cours: "[[Entrypoint]]"
+cours: "[[machine_learning/Readme]]"
 statut: draft
 Contexte: |-
   Livres de référence pour les 9 parties du cours.

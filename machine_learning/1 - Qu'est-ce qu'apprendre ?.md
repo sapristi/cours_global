@@ -1,6 +1,6 @@
 ---
 titre: 02 - Qu'est-ce qu'apprendre ?
-cours: "[[Entrypoint]]"
+cours: "[[machine_learning/Readme]]"
 partie: 1
 statut: draft
 Contexte: |-
