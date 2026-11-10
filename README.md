@@ -2,11 +2,10 @@
 
 Supports de cours:
 
-- **`machine_learning/`** : machine learning (4e année post-bac) — perceptron,
-  réseaux multi-couches, RBF, SVM, évaluation de modèles ;
-- **`scripting_python/`** : scripting Python pour la cybersécurité (3e année) —
-  bases de Python, réseau (`socket`, `requests`), analyse et détection avec
-  `pandas`.
+- **[`machine learning`](machine_learning/Readme.md)** ( perceptron,
+  réseaux multi-couches, RBF, SVM, évaluation de modèles)
+- **[`scripting python pour la cybersécurité`](scripting_python/Readme.md)**
+  (bases de Python, réseau, analyse et détection avec `pandas`)
 
 Chaque cours contient les cours rédigés en markdown et les notebooks de TD.
 Le point d'entrée de chaque cours (contexte, objectifs, plan, conventions) est
