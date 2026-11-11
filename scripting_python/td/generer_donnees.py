@@ -12,8 +12,9 @@ par difficulté de détection (cf. notebook `detection_beacon.ipynb`) :
 2. **Fast-flux / DGA** (`10.0.0.67`) — le rythme est régulier mais la
    destination *tourne* (domaine et IP changent à chaque connexion) : grouper
    par domaine ne suffit plus.
-3. **Timing aléatoire** (`10.0.0.68`) — aucun rythme exploitable ; l'indice
-   est dans la plage d'IP contactée (un /24 que personne d'autre ne touche).
+3. **Timing aléatoire** (`10.0.0.68`) — aucun rythme exploitable, et payload
+   rendu variable par du padding aléatoire ; l'indice est dans la plage d'IP
+   contactée (un /24 que personne d'autre ne touche).
 
 Un **second jeu de données** (`logs_reseau_grand.csv`) illustre le cas où le
 simple comptage de destinations ne suffit plus : une centaine d'hôtes légitimes
@@ -200,11 +201,14 @@ def generer_lignes(rng: random.Random) -> list[dict]:
         i += 1
 
     # --- Victime C : timing aléatoire, /24 rare ------------------------------
+    # Padding aléatoire : la taille envoyée varie, le signal « payload
+    # constant » ne le détecte pas. Flux dédié : `rng` garde la même séquence.
+    rng_padding = random.Random(GRAINE + 3000)
     domaine_c, _, port_c = C2_C
     t = DEBUT + timedelta(seconds=30)
     while t <= FIN:
         ip = f"{PREFIXE_C}.{rng.randint(101, 105)}"
-        ajouter(t, VICTIME_C, ip, domaine_c, port_c, 128)
+        ajouter(t, VICTIME_C, ip, domaine_c, port_c, 128 + rng_padding.randint(0, 900))
         # Intervalle exponentiel (pas de rythme) : moyenne ~300 s.
         t += timedelta(seconds=rng.expovariate(1 / 300.0))
 
